@@ -86,7 +86,7 @@ export default function LandingPage() {
       <footer className="py-10 text-center text-sm text-olive-600">
         <Wordmark size="sm" href={null} />
         <p className="mt-2 italic">
-          A pro bono initiative of Applied Development. Not a paid service.
+          A pro bono initiative of KEO Solutions. Not a paid service.
         </p>
       </footer>
     </main>
