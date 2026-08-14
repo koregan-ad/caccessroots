@@ -19,7 +19,7 @@ const serif = Fraunces({
 export const metadata: Metadata = {
   title: "CAccessRoots — Communication. Access. Roots.",
   description:
-    "An AD-sponsored pro bono scheduling platform connecting Deaf community members with volunteer interpreters for the moments that matter.",
+    "An KEO Solutions-sponsored pro bono scheduling platform connecting Deaf community members with volunteer interpreters for the moments that matter.",
 };
 
 export default function RootLayout({
