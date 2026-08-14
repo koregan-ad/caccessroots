@@ -3,48 +3,106 @@
 @tailwind utilities;
 
 @layer base {
-  html, body { @apply h-full; }
+  html,
   body {
-    @apply bg-oat-50 text-ink antialiased;
-    font-family: var(--font-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
+    @apply h-full;
   }
-  h1, h2, h3 {
+
+  body {
+    @apply antialiased;
+    background-color: #fbf9fc;
+    color: #2e2632;
+    font-family: var(--font-sans, ui-sans-serif), ui-sans-serif, system-ui,
+      sans-serif;
+  }
+
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-serif, Georgia), Georgia, serif;
-    @apply text-forest-700;
+    color: #501b65;
     letter-spacing: -0.01em;
   }
 }
 
 @layer components {
+  /* Cards */
   .card {
-    @apply rounded-2xl bg-white border border-sand-100 shadow-card;
+    @apply rounded-2xl bg-white shadow-sm;
+    border: 1px solid #eadcef;
   }
+
+  /* Base button */
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
   }
+
+  .btn:focus-visible {
+    outline: 2px solid #8d4bae;
+    outline-offset: 2px;
+  }
+
+  /* Primary KEO purple button */
   .btn-primary {
-    @apply btn bg-forest-700 text-oat-50 hover:bg-forest-900;
+    @apply btn text-white;
+    background-color: #501b65;
   }
+
+  .btn-primary:hover {
+    background-color: #48165c;
+  }
+
+  /* Secondary button */
   .btn-secondary {
-    @apply btn bg-white text-forest-700 border border-brand-200 hover:bg-brand-50;
+    @apply btn bg-white;
+    color: #501b65;
+    border: 1px solid #dcc5e7;
   }
+
+  .btn-secondary:hover {
+    background-color: #f8f3fa;
+  }
+
+  /* Danger should remain red */
   .btn-danger {
-    @apply btn bg-terra-600 text-white hover:bg-terra-700;
+    @apply btn text-white;
+    background-color: #b42318;
   }
+
+  .btn-danger:hover {
+    background-color: #912018;
+  }
+
+  /* Form inputs */
   .input {
-    @apply w-full rounded-xl border border-sand-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200;
+    @apply w-full rounded-xl bg-white px-3 py-2 text-sm shadow-sm;
+    border: 1px solid #dcc5e7;
   }
+
+  .input:focus {
+    border-color: #8d4bae;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(141, 75, 174, 0.15);
+  }
+
   .label {
-    @apply block text-sm font-medium text-ink mb-1;
+    @apply block text-sm font-medium mb-1;
+    color: #2e2632;
   }
+
+  /* Badges */
   .badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
   }
+
+  /* Temporary wordmark styling */
   .brand-wordmark {
     font-family: var(--font-serif, Georgia), Georgia, serif;
     letter-spacing: -0.01em;
+    color: #501b65;
   }
+
   .brand-wordmark .accent-c {
-    @apply text-brand-600;
+    color: #68ab64;
   }
 }
