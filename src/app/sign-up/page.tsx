@@ -27,27 +27,33 @@ const ROLES: { value: UserRole; label: string; desc: string }[] = [
 
 export default function SignUpPage() {
   const router = useRouter();
-  const initialRole: UserRole = "requestor";
-  const [role, setRole] = useState<UserRole>(initialRole);
+
+  const [role, setRole] = useState<UserRole>("requestor");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setError(null);
+    setSuccess(null);
     setLoading(true);
 
     const supabase = createSupabaseBrowserClient();
 
     const { data, error: signUpErr } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
       options: {
         emailRedirectTo: `${location.origin}/auth/callback`,
-        data: { full_name: fullName, role },
+        data: {
+          full_name: fullName.trim(),
+          role,
+        },
       },
     });
 
@@ -57,27 +63,19 @@ export default function SignUpPage() {
       return;
     }
 
-    const userId = data.user?.id;
+    setLoading(false);
 
-    if (userId) {
-      const status = role === "requestor" ? "active" : "pending";
-
-      const { error: profileErr } = await supabase.from("profiles").insert({
-        id: userId,
-        role,
-        status,
-        full_name: fullName,
-        email,
-      });
-
-      if (profileErr) {
-        setLoading(false);
-        setError(profileErr.message);
-        return;
-      }
+    /*
+      If email confirmation is turned on,
+      Supabase creates the user but may not create a session yet.
+    */
+    if (!data.session) {
+      setSuccess(
+        "Your account was created. Please check your email to confirm your account, then sign in."
+      );
+      return;
     }
 
-    setLoading(false);
     router.push(role === "requestor" ? "/requestor" : "/pending-approval");
     router.refresh();
   }
@@ -120,6 +118,7 @@ export default function SignUpPage() {
                   checked={role === r.value}
                   onChange={() => setRole(r.value)}
                 />
+
                 <div>
                   <p className="font-medium text-forest-700">{r.label}</p>
                   <p className="text-sm text-olive-700">{r.desc}</p>
@@ -134,12 +133,14 @@ export default function SignUpPage() {
             <label className="label" htmlFor="fullName">
               Full name
             </label>
+
             <input
               id="fullName"
               required
               className="input"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              autoComplete="name"
             />
           </div>
 
@@ -147,6 +148,7 @@ export default function SignUpPage() {
             <label className="label" htmlFor="email">
               Email
             </label>
+
             <input
               id="email"
               type="email"
@@ -154,6 +156,7 @@ export default function SignUpPage() {
               className="input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
             />
           </div>
 
@@ -161,6 +164,7 @@ export default function SignUpPage() {
             <label className="label" htmlFor="password">
               Password
             </label>
+
             <input
               id="password"
               type="password"
@@ -169,7 +173,9 @@ export default function SignUpPage() {
               className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
             />
+
             <p className="text-xs text-olive-600 mt-1">
               At least 8 characters.
             </p>
@@ -181,7 +187,24 @@ export default function SignUpPage() {
             </p>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          {success && (
+            <div className="rounded-lg bg-brand-50 border border-brand-200 px-4 py-3">
+              <p className="text-sm text-forest-700">{success}</p>
+
+              <Link
+                href="/sign-in"
+                className="inline-block mt-2 text-sm font-medium text-brand-700 underline"
+              >
+                Go to sign in
+              </Link>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full"
+          >
             {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
