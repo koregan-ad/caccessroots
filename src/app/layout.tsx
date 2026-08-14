@@ -17,16 +17,35 @@ const serif = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "CAccessRoots — Communication. Access. Roots.",
+  title: "CAccessRoots | Communication. Access. Roots.",
   description:
-    "A KEO Solutions-sponsored pro bono scheduling platform connecting Deaf community members with volunteer interpreters for the moments that matter.",
+    "A KEO Solutions-sponsored pro bono platform connecting Deaf community members with volunteer interpreters for the moments that matter.",
+
+  keywords: [
+    "CAccessRoots",
+    "KEO Solutions",
+    "Deaf community",
+    "ASL interpreters",
+    "volunteer interpreters",
+    "communication access",
+    "accessibility",
+    "pro bono interpreting",
+  ],
+
+  openGraph: {
+    title: "CAccessRoots | Communication. Access. Roots.",
+    description:
+      "Connecting Deaf community members with volunteer interpreters for the moments that matter.",
+    siteName: "CAccessRoots",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable}`}>
       <body>{children}</body>
