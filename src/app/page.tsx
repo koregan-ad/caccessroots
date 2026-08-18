@@ -173,8 +173,8 @@ export default function LandingPage() {
       {/* COMMUNITY SECTION */}
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="font-serif text-3xl text-[#501B65] md:text-4xl">
-            For the moments that matter.
+          <h2 className="text-center font-serif text-3xl text-[#501B65] md:text-4xl">
+            For the moments that matter
           </h2>
 
           <div
