@@ -25,10 +25,24 @@ const ROLES: { value: UserRole; label: string; desc: string }[] = [
   },
 ];
 
-export default function SignUpPage() {
+type SignUpPageProps = {
+  searchParams?: {
+    role?: string | string[];
+  };
+};
+
+export default function SignUpPage({ searchParams }: SignUpPageProps) {
   const router = useRouter();
 
-  const [role, setRole] = useState<UserRole>("requestor");
+  const roleParam = Array.isArray(searchParams?.role)
+    ? searchParams.role[0]
+    : searchParams?.role;
+  const initialRole: UserRole =
+    roleParam === "interpreter" || roleParam === "partner_admin"
+      ? roleParam
+      : "requestor";
+
+  const [role, setRole] = useState<UserRole>(initialRole);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
