@@ -1,36 +1,35 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-[#FBF9FC]">
       {/* HEADER */}
-      <header className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+      <header className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
         <div className="flex items-center justify-between gap-4">
-          {/* KEO LOGO */}
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href="/" className="flex shrink-0 items-center">
             <Image
               src="/keo-logo.png"
               alt="KEO Solutions"
               width={220}
               height={90}
-              className="h-12 sm:h-14 md:h-16 w-auto object-contain"
+              className="h-12 w-auto object-contain sm:h-14 md:h-16"
               priority
             />
           </Link>
 
-          {/* NAVIGATION */}
-          <nav className="flex items-center gap-2 sm:gap-3">
+          <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/sign-in"
-              className="px-3 sm:px-5 py-2.5 rounded-lg border border-[#501B65] text-[#501B65] text-sm sm:text-base font-medium hover:bg-[#F8F3FA] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+              className="rounded-lg border border-[#501B65] px-3 py-2.5 text-sm font-medium text-[#501B65] transition hover:bg-[#F8F3FA] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-5 sm:text-base"
             >
               Sign in
             </Link>
 
             <Link
               href="/sign-up"
-              className="px-3 sm:px-5 py-2.5 rounded-lg bg-[#501B65] text-white text-sm sm:text-base font-medium hover:bg-[#48165C] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+              className="rounded-lg bg-[#501B65] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-5 sm:text-base"
             >
               Get started
             </Link>
@@ -39,109 +38,179 @@ export default function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section className="max-w-6xl mx-auto px-6 pt-12 md:pt-16 pb-20 md:pb-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* LEFT SIDE */}
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-12 md:pb-24 md:pt-16">
+        <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
-            <p className="inline-flex rounded-full bg-[#F1E7F5] text-[#501B65] px-4 py-2 text-sm font-medium mb-5">
+            <p className="mb-5 inline-flex rounded-full bg-[#F1E7F5] px-4 py-2 text-sm font-medium text-[#501B65]">
               Sponsored by KEO Solutions
             </p>
 
-            <h1 className="font-serif text-5xl md:text-6xl font-medium text-[#501B65] leading-[1.05] tracking-tight">
+            <h1 className="font-serif text-5xl font-medium leading-[1.05] tracking-tight text-[#501B65] md:text-6xl">
               Where access
               <br />
-              takes{" "}
-              <em className="not-italic text-[#568F54]">
-                root.
-              </em>
+              takes <em className="not-italic text-[#568F54]">root.</em>
             </h1>
 
-            <p className="mt-6 text-lg text-[#514756] max-w-lg leading-relaxed">
-              Some of life's most important gatherings do not come with a clear path
-              to communication access. These are the moments where access matters deeply,
-              and where there may be no organization responsible for arranging it.
+            <div className="mt-6 max-w-lg space-y-4 text-lg leading-relaxed text-[#514756]">
+              <p>
+                Some of life&apos;s most important gatherings do not come with a
+                clear path to communication access. These are the moments where
+                access matters deeply—and where there may be no organization
+                responsible for arranging it.
+              </p>
 
-              CAccessRoots connects Deaf people with nationally certified interpreters
-              who volunteer their time for those moments. No agency, no invoice, no contract.
-              Just people showing up for each other, the way this work started.
-            </p>
+              <p>
+                CAccessRoots connects Deaf people with nationally certified
+                interpreters who volunteer their time for those moments. No
+                agency, no invoice, no contract. Just people showing up for each
+                other, the way this work started.
+              </p>
+            </div>
 
-            {/* BUTTONS */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/sign-up"
-                className="px-6 py-3 rounded-lg bg-[#501B65] text-white font-medium hover:bg-[#48165C] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-              >
-                Request An Interpreter
-              </Link>
+            <div className="mt-8 flex flex-wrap items-start gap-4">
+              <div className="max-w-xs">
+                <Link
+                  href="/sign-up"
+                  className="inline-flex rounded-lg bg-[#501B65] px-6 py-3 font-medium text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+                >
+                  Request an interpreter
+                </Link>
+
+                <p className="mt-3 text-sm leading-relaxed text-[#665C6B]">
+                  Share just enough to make a match. Personal details stay
+                  between you and your interpreter once you&apos;re connected.
+                </p>
+              </div>
 
               <Link
                 href="/sign-up?role=interpreter"
-                className="px-6 py-3 rounded-lg border border-[#501B65] text-[#501B65] font-medium hover:bg-[#F1E7F5] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+                className="inline-flex rounded-lg border border-[#501B65] px-6 py-3 font-medium text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
               >
-                Volunteer To Interpret
+                Volunteer to interpret
               </Link>
             </div>
 
-            <p className="mt-6 text-sm italic font-medium text-[#7D3EA2]">
+            <p className="mt-6 text-sm font-medium italic text-[#7D3EA2]">
               Communication. Access. Roots.
             </p>
           </div>
 
-          {/* RIGHT CARD */}
-          <div className="bg-white rounded-2xl border border-[#EADCEF] shadow-sm p-6 md:p-8">
-            <h2 className="font-serif text-2xl text-[#501B65] mb-6">
-              Why CAccessRoots
+          {/* MATCHING CARD */}
+          <div className="rounded-2xl border border-[#EADCEF] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 font-serif text-2xl text-[#501B65]">
+              How a match happens
             </h2>
 
             <ul className="space-y-5 text-sm">
               <Feature
-                title="Local geo intelligence"
-                desc="Distance, travel time, and service radius. Interpreters see the work that's actually a fit for where they live."
+                title="Close to home"
+                desc="Matching starts with geography. Interpreters see requests within a distance they can actually travel, so giving back fits around real life."
               />
 
               <Feature
-                title="Your conflicts, respected"
-                desc="Requestors list people they shouldn't be paired with. Those interpreters never see the request. Period."
+                title="Your circle, respected"
+                desc="Deaf communities are small. Name anyone you’d rather not be matched with, and they’ll never see your request. No explanation needed."
               />
 
               <Feature
-                title="Admin oversight"
-                desc="Sensitive assignments such as medical, family, and funeral requests route through admin approval before anyone is matched."
+                title="A person looks first"
+                desc="Tender requests—a funeral, a family conflict, a first meeting—get a coordinator’s eyes before anyone is matched. You don’t have to explain why the moment is tender."
               />
 
               <Feature
-                title="Built for community"
-                desc="Partner Deaf community organizations can vouch for members and see their community's activity."
+                title="Rooted in community"
+                desc="Deaf organizations can vouch for their members and see what’s happening locally. This grows through people who already know each other."
               />
             </ul>
           </div>
         </div>
       </section>
 
+      {/* EXPECTATIONS */}
+      <section
+        aria-labelledby="expectations-heading"
+        className="border-y border-[#EADCEF] bg-[#F8F3FA] py-16"
+      >
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 id="expectations-heading" className="sr-only">
+            What to know before getting started
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <ExpectationCard title="Before you request">
+              <p>
+                Every interpreter here is volunteering. There&apos;s no fee and no
+                guaranteed match—we&apos;ll do our best to find one.
+              </p>
+              <p>
+                Tell us the basics: date, location, and type of event. Keep
+                sensitive details out of the form.
+              </p>
+              <p>
+                Once you&apos;re matched, share what your interpreter should
+                know—names, signs, family dynamics, and anything else that will
+                help them serve you well.
+              </p>
+              <p>
+                If an employer, school, healthcare provider, public agency,
+                venue, or another organization may be responsible for providing
+                access, ask that organization first. CAccessRoots is not a
+                substitute for an existing access obligation.
+              </p>
+            </ExpectationCard>
+
+            <ExpectationCard title="Before you volunteer">
+              <p>
+                These are unpaid commitments. Nothing here is billable, and no
+                one will ask you to invoice.
+              </p>
+              <p>
+                Interpreting at a wedding, memorial, or family gathering is
+                intimate work. Come prepared to meet the people, not just the
+                event.
+              </p>
+              <p>
+                Coordination is handled by volunteers and ITP students learning
+                the work. Grace goes both directions.
+              </p>
+            </ExpectationCard>
+          </div>
+        </div>
+      </section>
+
       {/* COMMUNITY SECTION */}
-      <section className="bg-[#F8F3FA] py-16 border-y border-[#EADCEF]">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl text-[#501B65]">
+      <section className="py-16">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h2 className="font-serif text-3xl text-[#501B65] md:text-4xl">
             For the moments that matter.
           </h2>
 
           <div
-            className="w-12 h-1 bg-[#68AB64] rounded-full mx-auto mt-5"
+            className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#68AB64]"
             aria-hidden="true"
           />
 
-          <p className="mt-5 text-[#514756] leading-relaxed max-w-2xl mx-auto">
-            Funerals. Weddings. Parent–teacher nights. A grandparent&apos;s
-            birthday dinner. The conversations where being understood
-            isn&apos;t a luxury, it&apos;s a quiet kind of belonging.
-            CAccessRoots is built to honor those moments.
-          </p>
+          <div className="mx-auto mt-5 max-w-2xl space-y-4 leading-relaxed text-[#514756]">
+            <p>
+              A wedding toast. A graveside remembrance. A grandparent&apos;s
+              birthday dinner. A family reunion.
+            </p>
+            <p>
+              When no organization is responsible for arranging access, being
+              understood still matters—not as a transaction, but as a quiet kind
+              of belonging.
+            </p>
+            <p>
+              Interpreters and Deaf people built this profession together, in
+              living rooms and church basements, long before there were
+              contracts. CAccessRoots is a way back to that.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="py-10 px-6 text-center text-sm text-[#665C6B]">
+      <footer className="px-6 py-10 text-center text-sm text-[#665C6B]">
         <Link
           href="/"
           className="inline-flex items-center justify-center"
@@ -152,12 +221,13 @@ export default function LandingPage() {
             alt="KEO Solutions"
             width={180}
             height={75}
-            className="h-12 md:h-14 w-auto object-contain"
+            className="h-12 w-auto object-contain md:h-14"
           />
         </Link>
 
         <p className="mt-4 italic">
-          A pro bono initiative of KEO Solutions. Not a paid service.
+          A pro bono initiative of KEO Solutions. No fees, no invoices, no
+          contracts—for anyone.
         </p>
 
         <p className="mt-2 text-xs text-[#7B7080]">
@@ -168,27 +238,35 @@ export default function LandingPage() {
   );
 }
 
-function Feature({
-  title,
-  desc,
-}: {
-  title: string;
-  desc: string;
-}) {
+function Feature({ title, desc }: { title: string; desc: string }) {
   return (
     <li className="flex gap-4">
       <div
-        className="mt-1.5 h-2.5 w-2.5 rounded-full bg-[#68AB64] shrink-0"
+        className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#68AB64]"
         aria-hidden="true"
       />
 
       <div>
         <p className="font-semibold text-[#501B65]">{title}</p>
-        <p className="text-[#514756] mt-1 leading-relaxed">{desc}</p>
+        <p className="mt-1 leading-relaxed text-[#514756]">{desc}</p>
       </div>
     </li>
   );
 }
 
-  
-  
+function ExpectationCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <article className="rounded-2xl border border-[#EADCEF] bg-white p-6 shadow-sm md:p-8">
+      <h3 className="font-serif text-2xl text-[#501B65]">{title}</h3>
+      <div className="mt-5 space-y-4 leading-relaxed text-[#514756]">
+        {children}
+      </div>
+    </article>
+  );
+}
