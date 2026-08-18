@@ -72,14 +72,14 @@ export default function LandingPage() {
                 href="/sign-up"
                 className="px-6 py-3 rounded-lg bg-[#501B65] text-white font-medium hover:bg-[#48165C] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
               >
-                Request an interpreter
+                Request An Interpreter
               </Link>
 
               <Link
                 href="/sign-up?role=interpreter"
                 className="px-6 py-3 rounded-lg border border-[#501B65] text-[#501B65] font-medium hover:bg-[#F1E7F5] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
               >
-                Volunteer as an interpreter
+                Volunteer To Interpret
               </Link>
             </div>
 
