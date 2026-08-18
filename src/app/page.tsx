@@ -57,11 +57,13 @@ export default function LandingPage() {
             </h1>
 
             <p className="mt-6 text-lg text-[#514756] max-w-lg leading-relaxed">
-              A simple, warm place for Deaf community members to request
-              interpreters for the moments that matter, and for volunteer
-              interpreters to give back close to home. We&apos;re not here for
-              money. We&apos;re here to provide access in spaces that laws and
-              contracts don&apos;t reach.
+              Some of life's most important gatherings do not come with a clear path
+              to communication access. These are the moments where access matters deeply,
+              and where there may be no organization responsible for arranging it.
+
+              CAccessRoots connects Deaf people with nationally certified interpreters
+              who volunteer their time for those moments. No agency, no invoice, no contract.
+              Just people showing up for each other, the way this work started.
             </p>
 
             {/* BUTTONS */}
