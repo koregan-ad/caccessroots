@@ -66,22 +66,15 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-start gap-4">
-              <div className="max-w-xs">
             <div className="mt-8">
               <div className="flex flex-nowrap gap-3 sm:gap-4">
                 <Link
                   href="/sign-up"
-                  className="inline-flex rounded-lg bg-[#501B65] px-6 py-3 font-medium text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
                   className="inline-flex min-h-12 min-w-0 flex-1 items-center justify-center rounded-lg bg-[#501B65] px-3 py-3 text-center text-sm font-medium leading-tight text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-6 sm:text-base"
                 >
                   Request an interpreter
                 </Link>
 
-                <p className="mt-3 text-sm leading-relaxed text-[#665C6B]">
-                  Share just enough to make a match. Personal details stay
-                  between you and your interpreter once you&apos;re connected.
-                </p>
                 <Link
                   href="/sign-up?role=interpreter"
                   className="inline-flex min-h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-[#501B65] px-3 py-3 text-center text-sm font-medium leading-tight text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-6 sm:text-base"
@@ -90,12 +83,6 @@ export default function LandingPage() {
                 </Link>
               </div>
 
-              <Link
-                href="/sign-up?role=interpreter"
-                className="inline-flex rounded-lg border border-[#501B65] px-6 py-3 font-medium text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-              >
-                Volunteer to interpret
-              </Link>
               <p className="mt-3 w-[calc(50%-0.375rem)] text-sm leading-relaxed text-[#665C6B] sm:w-[calc(50%-0.5rem)]">
                 Share just enough to make a match. Personal details stay between
                 you and your interpreter once you&apos;re connected.
@@ -276,3 +263,4 @@ function ExpectationCard({
     </article>
   );
 }
+
