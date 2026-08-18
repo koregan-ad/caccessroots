@@ -128,6 +128,17 @@ export default function SignUpPage() {
           ))}
         </div>
 
+        {role === "interpreter" && (
+          <aside className="mt-6 rounded-xl border border-brand-200 bg-brand-50 p-4">
+            <p className="text-sm leading-relaxed text-forest-700">
+              The NAD-RID Code of Professional Conduct asks interpreters to
+              render pro bono services in a fair and reasonable manner (CPC
+              6.7). CAccessRoots is one way to do that — with structure,
+              community, and colleagues alongside you.
+            </p>
+          </aside>
+        )}
+
         <form onSubmit={onSubmit} className="space-y-4 mt-6">
           <div>
             <label className="label" htmlFor="fullName">
