@@ -16,8 +16,8 @@ export default function NewRequestPage() {
     <div className="max-w-2xl">
       <h1 className="text-2xl font-semibold">New request</h1>
       <p className="text-ink-muted mt-1">
-        Tell us about the event. The more we know, the better we can match an
-        interpreter who fits.
+        Tell us the basics: date, location, and type of event. Keep sensitive
+        details out of the form.
       </p>
 
       <form action={createRequestAction} className="card p-6 space-y-4 mt-6">
@@ -27,8 +27,8 @@ export default function NewRequestPage() {
         </div>
 
         <div>
-          <label className="label" htmlFor="description">Description</label>
-          <textarea id="description" name="description" className="input min-h-[88px]" placeholder="A few sentences to help the interpreter prepare (who will be there, anything relevant)." />
+          <label className="label" htmlFor="description">Practical details (optional)</label>
+          <textarea id="description" name="description" className="input min-h-[88px]" placeholder="Share only practical details needed to make a match. Save names, signs, and family details for your interpreter after you're connected." />
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -81,9 +81,10 @@ export default function NewRequestPage() {
             <label className="flex items-start gap-2">
               <input type="radio" name="sensitivity" value="sensitive" className="mt-1" />
               <span>
-                <span className="font-medium">Sensitive.</span> Family-only, medical with a minor,
-                funeral, legal, or other intimate context. An admin will review
-                the match before any interpreter is contacted.
+                <span className="font-medium">Sensitive.</span> Funeral, family
+                conflict, a first meeting, or another intimate context. A
+                coordinator will look at the request category before anyone is
+                matched. You do not need to explain why it is sensitive.
               </span>
             </label>
           </div>
