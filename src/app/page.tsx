@@ -53,7 +53,7 @@ export default function LandingPage() {
 
             <div className="mt-6 max-w-lg space-y-4 text-lg leading-relaxed text-[#514756]">
               <p>
-                Some of life&apos;s most important gatherings do not come with a
+                Some of life's most important gatherings do not come with a
                 clear path to communication access. These are the moments where
                 access matters deeply—and where there may be no organization
                 responsible for arranging it.
@@ -67,28 +67,28 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-start gap-4">
-              <div className="max-w-xs">
-                <Link
-                  href="/sign-up"
-                  className="inline-flex rounded-lg bg-[#501B65] px-6 py-3 font-medium text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-                >
-                  Request an interpreter
-                </Link>
+           {/* BUTTONS */}
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/sign-up"
+                className="px-6 py-3 rounded-lg bg-[#501B65] text-white font-medium hover:bg-[#48165C] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+              >
+                Request An Interpreter
+              </Link>
+
+              <Link
+                href="/sign-up?role=interpreter"
+                className="px-6 py-3 rounded-lg border border-[#501B65] text-[#501B65] font-medium hover:bg-[#F1E7F5] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+              >
+                Volunteer To Interpret
+              </Link>
+            </div>
 
                 <p className="mt-3 text-sm leading-relaxed text-[#665C6B]">
                   Share just enough to make a match. Personal details stay
                   between you and your interpreter once you&apos;re connected.
                 </p>
               </div>
-
-              <Link
-                href="/sign-up?role=interpreter"
-                className="inline-flex rounded-lg border border-[#501B65] px-6 py-3 font-medium text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-              >
-                Volunteer to interpret
-              </Link>
-            </div>
 
             <p className="mt-6 text-sm font-medium italic text-[#7D3EA2]">
               Communication. Access. Roots.
