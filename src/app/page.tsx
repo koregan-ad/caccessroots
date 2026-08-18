@@ -83,7 +83,7 @@ export default function LandingPage() {
                 </Link>
               </div>
 
-              <p className="mt-3 w-[calc(50%-0.375rem)] text-sm leading-relaxed text-[#665C6B] sm:w-[calc(50%-0.5rem)]">
+              <p className="mt-4 max-w-lg text-center text-sm leading-relaxed text-[#665C6B]">
                 Share just enough to make a match. Personal details stay between
                 you and your interpreter once you&apos;re connected.
               </p>
@@ -256,11 +256,12 @@ function ExpectationCard({
 }) {
   return (
     <article className="rounded-2xl border border-[#EADCEF] bg-white p-6 shadow-sm md:p-8">
-      <h3 className="font-serif text-2xl text-[#501B65]">{title}</h3>
+      <h3 className="text-center font-serif text-2xl text-[#501B65]">
+        {title}
+      </h3>
       <div className="mt-5 space-y-4 leading-relaxed text-[#514756]">
         {children}
       </div>
     </article>
   );
 }
-
