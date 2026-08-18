@@ -1,4 +1,4 @@
-import Image from "next/image";
+mport Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -53,42 +53,45 @@ export default function LandingPage() {
 
             <div className="mt-6 max-w-lg space-y-4 text-lg leading-relaxed text-[#514756]">
               <p>
-                Some of life's most important gatherings do not come with a
-                clear path to communication access. These are the moments where
-                access matters deeply—and where there may be no organization
-                responsible for arranging it.
+                No law covers a wedding. No funeral is guaranteed to cover
+                access. These are the gatherings where access matters most — and
+                where nobody is required to provide it.
               </p>
 
               <p>
                 CAccessRoots connects Deaf people with nationally certified
-                interpreters who volunteer their time for those moments. No
+                interpreters who volunteer their time for these moments. No
                 agency, no invoice, no contract. Just people showing up for each
                 other, the way this work started.
               </p>
             </div>
 
-           {/* BUTTONS */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/sign-up"
-                className="px-6 py-3 rounded-lg bg-[#501B65] text-white font-medium hover:bg-[#48165C] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-              >
-                Request An Interpreter
-              </Link>
-
-              <Link
-                href="/sign-up?role=interpreter"
-                className="px-6 py-3 rounded-lg border border-[#501B65] text-[#501B65] font-medium hover:bg-[#F1E7F5] transition focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
-              >
-                Volunteer To Interpret
-              </Link>
-            </div>
+            <div className="mt-8 flex flex-wrap items-start gap-4">
+              <div className="max-w-xs">
+            <div className="mt-8 grid grid-cols-2 items-start gap-3 sm:gap-4">
+              <div>
+                <Link
+                  href="/sign-up"
+                  className="inline-flex rounded-lg bg-[#501B65] px-6 py-3 font-medium text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-[#501B65] px-3 py-3 text-center text-sm font-medium leading-tight text-white transition hover:bg-[#48165C] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-6 sm:text-base"
+                >
+                  Request an interpreter
+                </Link>
 
                 <p className="mt-3 text-sm leading-relaxed text-[#665C6B]">
                   Share just enough to make a match. Personal details stay
                   between you and your interpreter once you&apos;re connected.
                 </p>
               </div>
+
+              <Link
+                href="/sign-up?role=interpreter"
+                className="inline-flex rounded-lg border border-[#501B65] px-6 py-3 font-medium text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-[#501B65] px-3 py-3 text-center text-sm font-medium leading-tight text-[#501B65] transition hover:bg-[#F1E7F5] focus:outline-none focus:ring-2 focus:ring-[#8D4BAE] focus:ring-offset-2 sm:px-6 sm:text-base"
+              >
+                Volunteer to interpret
+              </Link>
+            </div>
 
             <p className="mt-6 text-sm font-medium italic text-[#7D3EA2]">
               Communication. Access. Roots.
@@ -98,7 +101,7 @@ export default function LandingPage() {
           {/* MATCHING CARD */}
           <div className="rounded-2xl border border-[#EADCEF] bg-white p-6 shadow-sm md:p-8">
             <h2 className="mb-6 font-serif text-2xl text-[#501B65]">
-              How a match happens
+              Why CAccessRoots
             </h2>
 
             <ul className="space-y-5 text-sm">
@@ -109,17 +112,17 @@ export default function LandingPage() {
 
               <Feature
                 title="Your circle, respected"
-                desc="Deaf communities are small. Name anyone you’d rather not be matched with, and they’ll never see your request. No explanation needed."
+                desc="Deaf communities are small. Name anyone you'd rather not be matched with, and they'll never see your request. No explanation needed."
               />
 
               <Feature
                 title="A person looks first"
-                desc="Tender requests—a funeral, a family conflict, a first meeting—get a coordinator’s eyes before anyone is matched. You don’t have to explain why the moment is tender."
+                desc="Tender requests — a funeral, a family conflict, a first meeting — get a coordinator's eyes before anyone is matched. You don't have to explain why it's tender."
               />
 
               <Feature
                 title="Rooted in community"
-                desc="Deaf organizations can vouch for their members and see what’s happening locally. This grows through people who already know each other."
+                desc="Deaf organizations can vouch for their members and see what's happening locally. This grows through people who already know each other."
               />
             </ul>
           </div>
@@ -139,35 +142,28 @@ export default function LandingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <ExpectationCard title="Before you request">
               <p>
-                Every interpreter here is volunteering. There&apos;s no fee and no
-                guaranteed match—we&apos;ll do our best to find one.
+                Every interpreter here is volunteering. There&apos;s no fee, and
+                there&apos;s no guarantee — we&apos;ll do our best to find a match.
               </p>
               <p>
-                Tell us the basics: date, location, and type of event. Keep
+                Tell us the basics: date, location, type of event. Keep
                 sensitive details out of the form.
               </p>
               <p>
-                Once you&apos;re matched, share what your interpreter should
-                know—names, signs, family dynamics, and anything else that will
-                help them serve you well.
-              </p>
-              <p>
-                If an employer, school, healthcare provider, public agency,
-                venue, or another organization may be responsible for providing
-                access, ask that organization first. CAccessRoots is not a
-                substitute for an existing access obligation.
+                Once you&apos;re matched, share what your interpreter should know —
+                names, signs, family dynamics, anything that helps them serve you
+                well.
               </p>
             </ExpectationCard>
 
             <ExpectationCard title="Before you volunteer">
               <p>
-                These are unpaid commitments. Nothing here is billable, and no
+                These are unpaid assignments. Nothing here is billable, and no
                 one will ask you to invoice.
               </p>
               <p>
-                Interpreting at a wedding, memorial, or family gathering is
-                intimate work. Come prepared to meet the people, not just the
-                event.
+                Interpreting a wedding or a funeral is intimate work. Come
+                prepared to meet the family, not just the event.
               </p>
               <p>
                 Coordination is handled by volunteers and ITP students learning
@@ -192,13 +188,14 @@ export default function LandingPage() {
 
           <div className="mx-auto mt-5 max-w-2xl space-y-4 leading-relaxed text-[#514756]">
             <p>
-              A wedding toast. A graveside remembrance. A grandparent&apos;s
-              birthday dinner. A family reunion.
+              Funerals. Weddings. Parent–teacher nights. A grandparent&apos;s
+              birthday dinner.
             </p>
             <p>
-              When no organization is responsible for arranging access, being
-              understood still matters—not as a transaction, but as a quiet kind
-              of belonging.
+              No statute covers these rooms. No one is entitled to access and no
+              one is entitled to be paid. And yet this is where being understood
+              matters most — not as a legal accommodation, but as a quiet kind of
+              belonging.
             </p>
             <p>
               Interpreters and Deaf people built this profession together, in
@@ -227,7 +224,7 @@ export default function LandingPage() {
 
         <p className="mt-4 italic">
           A pro bono initiative of KEO Solutions. No fees, no invoices, no
-          contracts—for anyone.
+          contracts — for anyone.
         </p>
 
         <p className="mt-2 text-xs text-[#7B7080]">
