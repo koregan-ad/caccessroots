@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Wordmark } from "@/components/wordmark";
@@ -34,9 +34,15 @@ export default function SignUpPage() {
 }
 
 function SignUpForm() {
-  const router = useRouter();
   const params = useSearchParams();
-  const initialRole = (params.get("role") as UserRole) || "requestor";
+
+  const roleParam = params.get("role");
+
+  const initialRole: UserRole =
+    roleParam === "interpreter" || roleParam === "partner_admin"
+      ? roleParam
+      : "requestor";
+
   const [role, setRole] = useState<UserRole>(initialRole);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,16 +52,21 @@ function SignUpForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setError(null);
     setLoading(true);
+
     const supabase = createSupabaseBrowserClient();
 
     const { data, error: signUpErr } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
-        data: { full_name: fullName, role },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          full_name: fullName.trim(),
+          role,
+        },
       },
     });
 
@@ -65,33 +76,55 @@ function SignUpForm() {
       return;
     }
 
-    const userId = data.user?.id;
-    if (userId) {
-      const status = role === "requestor" ? "active" : "pending";
-      const { error: profileErr } = await supabase.from("profiles").insert({
-        id: userId, role, status, full_name: fullName, email,
-      });
-      if (profileErr) {
-        setLoading(false);
-        setError(profileErr.message);
-        return;
-      }
+    if (!data.user) {
+      setLoading(false);
+      setError("Your account could not be created. Please try again.");
+      return;
+    }
+
+    /*
+      The matching row in public.profiles should now be created
+      automatically by the Supabase database trigger.
+    */
+
+    if (!data.session) {
+      setLoading(false);
+
+      setError(
+        "Your account was created, but a login session was not started. Please sign in."
+      );
+
+      return;
     }
 
     setLoading(false);
-    router.push(role === "requestor" ? "/requestor" : "/pending-approval");
-    router.refresh();
+
+    if (role === "requestor") {
+      window.location.href = "/requestor";
+      return;
+    }
+
+    window.location.href = "/pending-approval";
   }
 
   return (
-    <main className="min-h-screen grid place-items-center px-4 py-12 bg-oat-50">
+    <main className="min-h-screen grid place-items-center px-4 py-12 bg-[#FAFAFA]">
       <div className="card p-8 w-full max-w-xl">
-        <Link href="/" className="text-sm text-olive-600">← Back</Link>
+        <Link href="/" className="text-sm text-[#DB1F26]">
+          ← Back
+        </Link>
+
         <div className="mt-4 mb-2">
           <Wordmark size="sm" href={null} />
         </div>
-        <h1 className="font-serif text-3xl text-forest-700 mt-2">Welcome to the roots.</h1>
-        <p className="text-sm text-olive-700 mt-1">Tell us which account you'd like.</p>
+
+        <h1 className="font-serif text-3xl text-[#0A0D12] mt-2">
+          Welcome to the roots.
+        </h1>
+
+        <p className="text-sm text-[#6B7280] mt-1">
+          Tell us which account you'd like.
+        </p>
 
         <div className="mt-6 space-y-3">
           {ROLES.map((r) => (
@@ -99,8 +132,8 @@ function SignUpForm() {
               key={r.value}
               className={`block cursor-pointer rounded-xl border p-4 transition ${
                 role === r.value
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-sand-200 hover:border-brand-300"
+                  ? "border-[#DB1F26] bg-[#FCEBEC]"
+                  : "border-[#E5E7EB] hover:border-[#DB1F26]"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -112,9 +145,11 @@ function SignUpForm() {
                   checked={role === r.value}
                   onChange={() => setRole(r.value)}
                 />
+
                 <div>
-                  <p className="font-medium text-forest-700">{r.label}</p>
-                  <p className="text-sm text-olive-700">{r.desc}</p>
+                  <p className="font-medium text-[#0A0D12]">{r.label}</p>
+
+                  <p className="text-sm text-[#6B7280]">{r.desc}</p>
                 </div>
               </div>
             </label>
@@ -123,34 +158,78 @@ function SignUpForm() {
 
         <form onSubmit={onSubmit} className="space-y-4 mt-6">
           <div>
-            <label className="label" htmlFor="fullName">Full name</label>
-            <input id="fullName" required className="input"
-              value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <label className="label" htmlFor="fullName">
+              Full name
+            </label>
+
+            <input
+              id="fullName"
+              required
+              className="input"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              autoComplete="name"
+            />
           </div>
+
           <div>
-            <label className="label" htmlFor="email">Email</label>
-            <input id="email" type="email" required className="input"
-              value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label className="label" htmlFor="email">
+              Email
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              required
+              className="input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+            />
           </div>
+
           <div>
-            <label className="label" htmlFor="password">Password</label>
-            <input id="password" type="password" required minLength={8} className="input"
-              value={password} onChange={(e) => setPassword(e.target.value)} />
-            <p className="text-xs text-olive-600 mt-1">At least 8 characters.</p>
+            <label className="label" htmlFor="password">
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              required
+              minLength={8}
+              className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+
+            <p className="text-xs text-[#6B7280] mt-1">
+              At least 8 characters.
+            </p>
           </div>
+
           {error && (
-            <p className="text-sm text-terra-700 bg-terra-50 px-3 py-2 rounded-lg">
+            <p className="text-sm text-[#B42318] bg-[#FEF3F2] px-3 py-2 rounded-lg">
               {error}
             </p>
           )}
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full"
+          >
             {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
 
-        <p className="text-sm text-olive-700 mt-6 text-center">
+        <p className="text-sm text-[#6B7280] mt-6 text-center">
           Already have an account?{" "}
-          <Link href="/sign-in" className="text-brand-700 font-medium underline-offset-2 hover:underline">
+          <Link
+            href="/sign-in"
+            className="text-[#DB1F26] font-medium underline-offset-2 hover:underline"
+          >
             Sign in
           </Link>
         </p>
@@ -161,10 +240,13 @@ function SignUpForm() {
 
 function AuthLoading() {
   return (
-    <main className="min-h-screen grid place-items-center px-4 bg-oat-50">
+    <main className="min-h-screen grid place-items-center px-4 bg-[#FAFAFA]">
       <div className="card p-8 w-full max-w-xl">
         <Wordmark size="sm" href={null} />
-        <p className="text-sm text-olive-700 mt-4">Loading sign up…</p>
+
+        <p className="text-sm text-[#6B7280] mt-4">
+          Loading sign up…
+        </p>
       </div>
     </main>
   );
