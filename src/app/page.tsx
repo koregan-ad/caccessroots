@@ -10,8 +10,8 @@ export default function LandingPage() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex shrink-0 items-center">
             <Image
-              src="/keo-logo.png"
-              alt="KEO Solutions"
+              src="/applied-development-logo.png"
+              alt="Applied Development"
               width={220}
               height={90}
               className="h-12 w-auto object-contain sm:h-14 md:h-16"
@@ -42,7 +42,7 @@ export default function LandingPage() {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <p className="mb-5 inline-flex rounded-full bg-[#F1E7F5] px-4 py-2 text-sm font-medium text-[#501B65]">
-              Sponsored by KEO Solutions
+              Powered by Applied Development
             </p>
 
             <h1 className="font-serif text-5xl font-medium leading-[1.05] tracking-tight text-[#501B65] md:text-6xl">
@@ -210,8 +210,8 @@ export default function LandingPage() {
           aria-label="KEO Solutions home"
         >
           <Image
-            src="/keo-logo.png"
-            alt="KEO Solutions"
+            src="/applied-development-logo.png"
+            alt="Applied Development"
             width={180}
             height={75}
             className="h-12 w-auto object-contain md:h-14"
@@ -219,7 +219,7 @@ export default function LandingPage() {
         </Link>
 
         <p className="mt-4 italic">
-          A pro bono initiative of KEO Solutions. No fees, no invoices, no
+          A pro bono initiative of Applied Development. No fees, no invoices, no
           contracts — for anyone.
         </p>
 
