@@ -62,7 +62,6 @@ function SignUpForm() {
       email: email.trim(),
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: fullName.trim(),
           role,
@@ -82,18 +81,11 @@ function SignUpForm() {
       return;
     }
 
-    /*
-      The matching row in public.profiles should now be created
-      automatically by the Supabase database trigger.
-    */
-
     if (!data.session) {
       setLoading(false);
-
       setError(
-        "Your account was created, but a login session was not started. Please sign in."
+        "Your account was created, but no login session was started. Please sign in."
       );
-
       return;
     }
 
