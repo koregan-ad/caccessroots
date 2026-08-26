@@ -1,4 +1,7 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import {
+  createServerClient,
+  type CookieOptions,
+} from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = {
