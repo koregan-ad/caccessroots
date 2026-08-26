@@ -1,15 +1,15 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Wordmark } from "@/components/wordmark";
 
 function SignInContent() {
-  const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") ?? "/dashboard";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -17,31 +17,38 @@ function SignInContent() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setError(null);
     setLoading(true);
 
     const supabase = createSupabaseBrowserClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
       password,
     });
 
-    setLoading(false);
-
     if (error) {
+      setLoading(false);
       setError(error.message);
       return;
     }
 
-    router.push(next);
-    router.refresh();
+    if (!data.session) {
+      setLoading(false);
+      setError("Unable to create a login session. Please try again.");
+      return;
+    }
+
+    // Force a full reload so the server immediately sees
+    // the new Supabase authentication session.
+    window.location.href = next;
   }
 
   return (
-    <main className="min-h-screen grid place-items-center px-4 bg-oat-50">
+    <main className="min-h-screen grid place-items-center px-4 bg-[#FAFAFA]">
       <div className="card p-8 w-full max-w-md">
-        <Link href="/" className="text-sm text-olive-600">
+        <Link href="/" className="text-sm text-[#DB1F26]">
           ← Back
         </Link>
 
@@ -49,11 +56,11 @@ function SignInContent() {
           <Wordmark size="sm" href={null} />
         </div>
 
-        <h1 className="font-serif text-3xl text-forest-700 mt-2">
+        <h1 className="font-serif text-3xl text-[#0A0D12] mt-2">
           Welcome back.
         </h1>
 
-        <p className="text-sm text-olive-700 mt-1">
+        <p className="text-sm text-[#6B7280] mt-1">
           Sign in to continue.
         </p>
 
@@ -62,6 +69,7 @@ function SignInContent() {
             <label className="label" htmlFor="email">
               Email
             </label>
+
             <input
               id="email"
               type="email"
@@ -69,6 +77,7 @@ function SignInContent() {
               className="input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
             />
           </div>
 
@@ -76,6 +85,7 @@ function SignInContent() {
             <label className="label" htmlFor="password">
               Password
             </label>
+
             <input
               id="password"
               type="password"
@@ -83,25 +93,30 @@ function SignInContent() {
               className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-terra-700 bg-terra-50 px-3 py-2 rounded-lg">
+            <p className="text-sm text-[#B42318] bg-[#FEF3F2] px-3 py-2 rounded-lg">
               {error}
             </p>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full"
+          >
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <p className="text-sm text-olive-700 mt-6 text-center">
+        <p className="text-sm text-[#6B7280] mt-6 text-center">
           New here?{" "}
           <Link
             href="/sign-up"
-            className="text-brand-700 font-medium underline-offset-2 hover:underline"
+            className="text-[#DB1F26] font-medium underline-offset-2 hover:underline"
           >
             Create an account
           </Link>
@@ -118,3 +133,4 @@ export default function SignInPage() {
     </Suspense>
   );
 }
+
