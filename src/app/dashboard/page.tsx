@@ -1,24 +1,43 @@
 import { redirect } from "next/navigation";
-import { getCurrentProfile } from "@/lib/auth";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-// Role-based router. Lands every signed-in user at the right dashboard.
-export default async function DashboardRouter() {
-  const profile = await getCurrentProfile();
-  if (!profile) redirect("/sign-in");
-  if (profile.status === "pending" && profile.role !== "requestor") {
-    redirect("/pending-approval");
+export default async function DashboardPage() {
+  const supabase = createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
   }
-  switch (profile.role) {
-    case "admin":
-      redirect("/admin");
-    case "coordinator":
-      redirect("/coordinator");
-    case "interpreter":
-      redirect("/interpreter");
-    case "partner_admin":
-      redirect("/partner");
-    case "requestor":
-    default:
-      redirect("/requestor");
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("role, status")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !profile) {
+    redirect("/sign-in");
   }
+
+  if (profile.role === "requestor") {
+    redirect("/requestor");
+  }
+
+  if (
+    profile.role === "interpreter" ||
+    profile.role === "partner_admin"
+  ) {
+    if (profile.status === "pending") {
+      redirect("/pending-approval");
+    }
+  }
+
+  if (profile.role === "admin") {
+    redirect("/admin");
+  }
+
+  redirect("/");
 }
