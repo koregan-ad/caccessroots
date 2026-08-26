@@ -35,13 +35,12 @@ const NAV: Record<UserRole, { href: string; label: string }[]> = {
   ],
 };
 
-// Admin gets a deeper-forest header; partner gets a river-blue accent.
 const HEADER_TONE: Record<UserRole, string> = {
-  requestor: "bg-white border-b border-sand-200",
-  interpreter: "bg-white border-b border-sand-200",
-  coordinator: "bg-white border-b border-brand-100",
-  admin: "bg-forest-900 border-b border-forest-700 text-oat-50",
-  partner_admin: "bg-river-700 border-b border-river-900 text-oat-50",
+  requestor: "bg-white border-b border-[#E5E7EB]",
+  interpreter: "bg-white border-b border-[#E5E7EB]",
+  coordinator: "bg-white border-b border-[#E5E7EB]",
+  admin: "bg-[#0A0D12] border-b border-[#1F2937] text-white",
+  partner_admin: "bg-[#0A0D12] border-b border-[#1F2937] text-white",
 };
 
 export default function AppShell({
@@ -52,53 +51,67 @@ export default function AppShell({
   children: React.ReactNode;
 }) {
   const nav = NAV[profile.role];
-  const isDark = profile.role === "admin" || profile.role === "partner_admin";
+
+  const isDark =
+    profile.role === "admin" || profile.role === "partner_admin";
+
   return (
-    <div className="min-h-screen bg-oat-50">
+    <div className="min-h-screen bg-[#FAFAFA]">
       <header className={HEADER_TONE[profile.role]}>
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2">
             {isDark ? (
-              <span className="brand-wordmark text-xl font-medium text-oat-50">
-                <span className="text-brand-200">C</span>AccessRoots
+              <span className="brand-wordmark text-xl font-medium text-white">
+                <span className="text-[#DB1F26]">C</span>AccessRoots
               </span>
             ) : (
               <Wordmark size="sm" href={null} />
             )}
+
             <span
               className={`badge ml-2 capitalize ${
                 isDark
-                  ? "bg-forest-700 text-oat-50"
-                  : "bg-brand-50 text-brand-800"
+                  ? "bg-[#DB1F26] text-white"
+                  : "bg-[#FCEBEC] text-[#DB1F26]"
               }`}
             >
               {profile.role.replace("_", " ")}
             </span>
           </Link>
+
           <nav className="hidden md:flex items-center gap-1">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-2 rounded-lg text-sm ${
+                className={`px-3 py-2 rounded-lg text-sm transition ${
                   isDark
-                    ? "text-oat-50/80 hover:text-oat-50 hover:bg-white/10"
-                    : "text-olive-700 hover:text-forest-700 hover:bg-brand-50"
+                    ? "text-white/80 hover:text-white hover:bg-white/10"
+                    : "text-[#374151] hover:text-[#DB1F26] hover:bg-[#FCEBEC]"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
+
           <div className="flex items-center gap-3">
-            <span className={`text-sm hidden sm:inline ${isDark ? "text-oat-50/80" : "text-olive-700"}`}>
+            <span
+              className={`text-sm hidden sm:inline ${
+                isDark ? "text-white/80" : "text-[#6B7280]"
+              }`}
+            >
               {profile.full_name}
             </span>
+
             <SignOutButton variant={isDark ? "onDark" : "default"} />
           </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {children}
+      </main>
     </div>
   );
 }
