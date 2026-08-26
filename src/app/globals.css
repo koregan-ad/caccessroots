@@ -3,106 +3,106 @@
 @tailwind utilities;
 
 @layer base {
-  html,
-  body {
-    @apply h-full;
-  }
+html,
+body {
+@apply h-full;
+}
 
-  body {
-    @apply antialiased;
-    background-color: #fbf9fc;
-    color: #2e2632;
-    font-family: var(--font-sans, ui-sans-serif), ui-sans-serif, system-ui,
-      sans-serif;
-  }
+body {
+@apply antialiased;
+background-color: #fafafa;
+color: #0a0d12;
+font-family: var(--font-sans, ui-sans-serif), ui-sans-serif, system-ui,
+sans-serif;
+}
 
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-serif, Georgia), Georgia, serif;
-    color: #501b65;
-    letter-spacing: -0.01em;
-  }
+h1,
+h2,
+h3 {
+font-family: var(--font-serif, Georgia), Georgia, serif;
+color: #0a0d12;
+letter-spacing: -0.01em;
+}
 }
 
 @layer components {
-  /* Cards */
-  .card {
-    @apply rounded-2xl bg-white shadow-sm;
-    border: 1px solid #eadcef;
-  }
+/* Cards */
+.card {
+@apply rounded-2xl bg-white shadow-sm;
+border: 1px solid #e5e7eb;
+}
 
-  /* Base button */
-  .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+/* Base button */
+.btn {
+@apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition disabled disabled;
+}
 
-  .btn:focus-visible {
-    outline: 2px solid #8d4bae;
-    outline-offset: 2px;
-  }
+.btn {
+outline: 2px solid #db1f26;
+outline-offset: 2px;
+}
 
-  /* Primary KEO purple button */
-  .btn-primary {
-    @apply btn text-white;
-    background-color: #501b65;
-  }
+/* Primary Applied Development red button */
+.btn-primary {
+@apply btn text-white;
+background-color: #db1f26;
+}
 
-  .btn-primary:hover {
-    background-color: #48165c;
-  }
+.btn-primary {
+background-color: #b8171d;
+}
 
-  /* Secondary button */
-  .btn-secondary {
-    @apply btn bg-white;
-    color: #501b65;
-    border: 1px solid #dcc5e7;
-  }
+/* Secondary button */
+.btn-secondary {
+@apply btn bg-white;
+color: #db1f26;
+border: 1px solid #e5e7eb;
+}
 
-  .btn-secondary:hover {
-    background-color: #f8f3fa;
-  }
+.btn-secondary {
+background-color: #fcebec;
+}
 
-  /* Danger should remain red */
-  .btn-danger {
-    @apply btn text-white;
-    background-color: #b42318;
-  }
+/* Danger should remain red */
+.btn-danger {
+@apply btn text-white;
+background-color: #b42318;
+}
 
-  .btn-danger:hover {
-    background-color: #912018;
-  }
+.btn-danger {
+background-color: #912018;
+}
 
-  /* Form inputs */
-  .input {
-    @apply w-full rounded-xl bg-white px-3 py-2 text-sm shadow-sm;
-    border: 1px solid #dcc5e7;
-  }
+/* Form inputs */
+.input {
+@apply w-full rounded-xl bg-white px-3 py-2 text-sm shadow-sm;
+border: 1px solid #e5e7eb;
+}
 
-  .input:focus {
-    border-color: #8d4bae;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(141, 75, 174, 0.15);
-  }
+.input {
+border-color: #db1f26;
+outline: none;
+box-shadow: 0 0 0 3px rgba(219, 31, 38, 0.15);
+}
 
-  .label {
-    @apply block text-sm font-medium mb-1;
-    color: #2e2632;
-  }
+.label {
+@apply block text-sm font-medium mb-1;
+color: #0a0d12;
+}
 
-  /* Badges */
-  .badge {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
-  }
+/* Badges */
+.badge {
+@apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
+}
 
-  /* Temporary wordmark styling */
-  .brand-wordmark {
-    font-family: var(--font-serif, Georgia), Georgia, serif;
-    letter-spacing: -0.01em;
-    color: #501b65;
-  }
+/* Temporary wordmark styling */
+.brand-wordmark {
+font-family: var(--font-serif, Georgia), Georgia, serif;
+letter-spacing: -0.01em;
+color: #0a0d12;
+}
 
-  .brand-wordmark .accent-c {
-    color: #68ab64;
-  }
+.brand-wordmark .accent-c {
+color: #db1f26;
+}
 }
