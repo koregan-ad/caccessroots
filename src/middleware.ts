@@ -1,7 +1,11 @@
-import {
-  createServerClient,
-  type CookieOptions,
-} from "@supabase/ssr";
+setAll(cookiesToSet) {
+  setAll(
+  cookiesToSet: Array<{
+    name: string;
+    value: string;
+    options: CookieOptions;
+  }>
+) {
 import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = {
