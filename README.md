@@ -2,7 +2,7 @@
 
 **Communication. Access. Roots.**
 
-An KEO Solutions-sponsored pro bono scheduling platform connecting Deaf community members
+An Applied Development-sponsored pro bono scheduling platform connecting Deaf community members
 with volunteer interpreters for the moments that matter. Built with Next.js 14
 (App Router) and Supabase (Postgres + PostGIS + Auth + RLS), with Mapbox for
 geo intelligence.
@@ -31,7 +31,7 @@ standard-sensitivity requests, the proposal goes straight to the interpreter
 for accept/decline. For sensitive requests, the proposal goes to an admin for
 release first.
 
-**Admin (KEO Solutions).** Top-level oversight. Approve new interpreters and partner
+**Admin (AD).** Top-level oversight. Approve new interpreters and partner
 communities. Release sensitive assignments. Suspend or reinstate users.
 Propose and second-key role escalations. View the full audit log. Manage
 partner communities.
@@ -203,4 +203,4 @@ in mind when extending:
 
 ## License
 
-Internal KEO Solutions project. All rights reserved.
+Internal Applied Development project. All rights reserved.
