@@ -125,61 +125,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* COMMUNITY SECTION */}
-      <section className="py-16">
-        <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-center font-serif text-3xl text-[#0A0D12] md:text-4xl">
-            For the moments no one is required to cover
-          </h2>
-
-          <div
-            className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#DB1F26]"
-            aria-hidden="true"
-          />
-
-          <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
-            <p>
-              Funerals. Wedding ceremonies. A family meeting about Mom’s care.
-              A hiking group that meets every Saturday morning.
-            </p>
-
-            <p>
-              The law follows institutions. It requires communication access
-              at the hospital, the courthouse, the school, and the employer.
-              It stops at the church door, the graveside, the reception hall,
-              and the living room. In those rooms, nobody may be legally
-              required to provide access.
-            </p>
-
-            <p>
-              That means the moments most likely to go unshared are often the
-              ones a person actually remembers—not the deposition, but the
-              eulogy.
-            </p>
-
-            <p>
-              Researchers have a name for what can happen instead: dinner
-              table syndrome—sitting in a room full of family, watching
-              conversations happen, and waiting to be caught up.
-            </p>
-
-            <blockquote className="rounded-r-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] px-6 py-5 italic text-[#374151]">
-              <p>“I so wanted to be a part of that. I felt so alone.”</p>
-              <footer className="mt-2 text-sm not-italic text-[#6B7280]">
-                Study participant, Meek (2020)
-              </footer>
-            </blockquote>
-
-            <p>
-              Interpreters and Deaf people built this profession together, in
-              living rooms and church basements, long before there were
-              contracts. CAccessRoots is a way back to that.
-            </p>
-          </div>
-        </div>
-      </section>
-
+      
        <CoverageGuide />
 
       {/* EXPECTATIONS */}
@@ -486,6 +432,60 @@ function CoverageGuide() {
     </section>
   );
 }
+
+      {/* COMMUNITY SECTION */}
+      <section className="py-16">
+        <div className="mx-auto max-w-4xl px-6">
+          <h2 className="text-center font-serif text-3xl text-[#0A0D12] md:text-4xl">
+            For the moments no one is required to cover
+          </h2>
+
+          <div
+            className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#DB1F26]"
+            aria-hidden="true"
+          />
+
+          <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
+            <p>
+              Funerals. Wedding ceremonies. A family meeting about Mom’s care.
+              A hiking group that meets every Saturday morning.
+            </p>
+
+            <p>
+              The law follows institutions. It requires communication access
+              at the hospital, the courthouse, the school, and the employer.
+              It stops at the church door, the graveside, the reception hall,
+              and the living room. In those rooms, nobody may be legally
+              required to provide access.
+            </p>
+
+            <p>
+              That means the moments most likely to go unshared are often the
+              ones a person actually remembers—not the deposition, but the
+              eulogy.
+            </p>
+
+            <p>
+              Researchers have a name for what can happen instead: dinner
+              table syndrome—sitting in a room full of family, watching
+              conversations happen, and waiting to be caught up.
+            </p>
+
+            <blockquote className="rounded-r-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] px-6 py-5 italic text-[#374151]">
+              <p>“I so wanted to be a part of that. I felt so alone.”</p>
+              <footer className="mt-2 text-sm not-italic text-[#6B7280]">
+                Study participant, Meek (2020)
+              </footer>
+            </blockquote>
+
+            <p>
+              Interpreters and Deaf people built this profession together, in
+              living rooms and church basements, long before there were
+              contracts. CAccessRoots is a way back to that.
+            </p>
+          </div>
+        </div>
+      </section>
 
 function CoverageTable({
   title,
