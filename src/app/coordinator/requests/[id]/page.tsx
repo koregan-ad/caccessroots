@@ -12,15 +12,32 @@ export default async function MatchRequestPage({
 }) {
   const supabase = createSupabaseServerClient();
 
-  const { data: request, error } = await supabase
-    .from("requests")
-    .select(
-      "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor(full_name,email)"
-    )
-    .eq("id", params.id)
-    .single();
+ const { data: request, error } = await supabase
+  .from("requests")
+  .select(
+    "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id"
+  )
+  .eq("id", params.id)
+  .maybeSingle();
 
-  if (error || !request) notFound();
+if (error) {
+  console.error("Coordinator request load error:", error);
+  throw new Error(`Could not load request: ${error.message}`);
+}
+
+if (!request) {
+  notFound();
+}
+
+const { data: requestor, error: requestorError } = await supabase
+  .from("profiles")
+  .select("full_name,email")
+  .eq("id", request.requestor_id)
+  .maybeSingle();
+
+if (requestorError) {
+  console.error("Coordinator requestor load error:", requestorError);
+}
 
   const { data: recs, error: recError } = await supabase.rpc(
     "match_interpreters_for_request",
@@ -90,9 +107,9 @@ export default async function MatchRequestPage({
             </h1>
 
             <p className="text-ink-muted mt-1">
-              {(request as any).requestor?.full_name} (
-              {(request as any).requestor?.email})
-            </p>
+  {requestor?.full_name ?? "Unknown requestor"}
+  {requestor?.email ? ` (${requestor.email})` : ""}
+</p>
           </div>
 
           {request.sensitivity === "sensitive" && (
