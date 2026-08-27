@@ -48,7 +48,7 @@ if (requestsError) {
 }
 
 const rowsWithRequests =
-  rows?.map((row) => ({
+  {rowsWithRequests.map((row: any) => {
     ...row,
     requests: requests?.find(
       (request) => request.id === row.request_id
