@@ -146,23 +146,23 @@ export default function LandingPage() {
           />
 
           <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
-            <p>
+            <p className="text-center">
               Funerals. Wedding ceremonies. A family meeting about Mom’s care. A hiking group that meets every
               Saturday morning.
             </p>
 
-            <p>
+              <p className="text-center">
               The law follows institutions. It requires an interpreter at the hospital, the courthouse, the school, the
               employer. It stops at the church door, the graveside, the reception hall, and the living room. In those
               rooms nobody is entitled to access, and nobody is entitled to be paid for providing it.
             </p>
 
-            <p>
+              <p className="text-center">
               Which means the moments most likely to go unshared are the ones a person actually remembers. Not
               the deposition. The eulogy.
             </p>
 
-            <p>
+              <p className="text-center">
               Researchers have a name for what happens instead. In a 2020 study in The Qualitative Report, Deaf
               adults described dinner table syndrome: sitting in a room full of family, watching mouths move, waiting
               to be caught up. One participant, describing a Christmas game with her own family, put it plainly.
@@ -176,7 +176,7 @@ export default function LandingPage() {
               </footer>
             </blockquote>
 
-            <p>
+            <p className="text-center">
               Interpreters and Deaf people built this profession together, in living rooms and church basements, long
               before there were contracts. CAccessRoots is a way back to that.
             </p>
@@ -334,8 +334,7 @@ function CoverageGuide() {
   const notCovered = [
     {
       where: "Religious organizations and activities they operate",
-      detail:
-        "Religious organizations are generally exempt from the ADA. This can include weddings, funerals, baptisms, and services held in houses of worship.",
+      detail:Religious organizations are exempt from the ADA outright. A wedding, a funeral, a baptism, a bar mitzvah, or a Sunday service in a house of worship carries no legal obligation to anyone.",
     },
     {
       where: "Private homes",
@@ -350,7 +349,7 @@ function CoverageGuide() {
     {
       where: "Informal and volunteer-run groups",
       detail:
-        "Book clubs, neighborhood associations, informal sports, and similar groups may not be covered entities.",
+        "Hiking clubs, running groups, book clubs, quilting circles, neighborhood associations, pickup sports. Nobody is a covered entity. Nobody has a budget.",
     },
     {
       where: "Private clubs that genuinely limit membership",
