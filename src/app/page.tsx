@@ -141,37 +141,40 @@ export default function LandingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <ExpectationCard title="Before you request">
               <p>
-                Every interpreter here is volunteering. There&apos;s no fee,
-                and there&apos;s no guarantee—we&apos;ll do our best to find a
-                match.
+                Every interpreter here is volunteering. There’s no fee, and there’s no guarantee. We’ll do our best to
+                find a match.
               </p>
 
               <p>
-                Tell us the basics: date, location, and type of event. Keep
-                sensitive details out of the form.
+                First, check the list above. If your event is somewhere that’s legally required to provide an interpreter,
+                ask them. You’ll get a qualified interpreter at their expense, and you’ll keep this pool free for the
+                moments that have nowhere else to go.
               </p>
 
               <p>
-                Once you&apos;re matched, share what your interpreter should
-                know—names, signs, family dynamics, and anything that helps
-                them serve you well.
+                Tell us the basics: date, location, type of event. Keep sensitive details out of the form.
               </p>
+
+            <p>
+            Once you’re matched, share what your interpreter should know. Names, signs, family dynamics,
+            anything that helps them serve you well.
+            </p>
+              
+            </ExpectationCard>
+            </ExpectationCard>
             </ExpectationCard>
 
             <ExpectationCard title="Before you volunteer">
               <p>
-                These are unpaid assignments. Nothing here is billable, and no
-                one will ask you to invoice.
+                These are unpaid assignments. Nothing here is billable, and no one will ask you to invoice.
               </p>
 
               <p>
-                Interpreting a wedding or a funeral is intimate work. Come
-                prepared to meet the family, not just the event.
+                Interpreting a wedding or a funeral is intimate work. Come prepared to meet the family, not just the event
               </p>
 
               <p>
-                Coordination is handled by volunteers and ITP students
-                learning the work. Grace goes both directions.
+                Coordination is handled by volunteers and ITP students learning the work. Grace goes both directions.
               </p>
             </ExpectationCard>
           </div>
@@ -191,7 +194,7 @@ export default function LandingPage() {
           />
 
           <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
-            <p className="text-center">
+            <p>
               Funerals. Wedding ceremonies. A family meeting about Mom’s care.
               A hiking group that meets every Saturday morning.
             </p>
