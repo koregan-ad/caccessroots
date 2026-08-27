@@ -334,7 +334,7 @@ function CoverageGuide() {
   const notCovered = [
     {
       where: "Religious organizations and activities they operate",
-      detail:Religious organizations are exempt from the ADA outright. A wedding, a funeral, a baptism, a bar mitzvah, or a Sunday service in a house of worship carries no legal obligation to anyone.",
+      detail: "Religious organizations are exempt from the ADA outright. A wedding, a funeral, a baptism, a bar mitzvah, or a Sunday service in a house of worship carries no legal obligation to anyone.",
     },
     {
       where: "Private homes",
