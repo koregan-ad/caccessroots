@@ -126,59 +126,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <CoverageGuide />
-
-      {/* EXPECTATIONS */}
-      <section
-        aria-labelledby="expectations-heading"
-        className="border-y border-[#E5E7EB] bg-[#F5F6F7] py-16"
-      >
-        <div className="mx-auto max-w-6xl px-6">
-          <h2 id="expectations-heading" className="sr-only">
-            What to know before getting started
-          </h2>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <ExpectationCard title="Before you request">
-              <p>
-                Every interpreter here is volunteering. There’s no fee, and there’s no guarantee. We’ll do our best to
-                find a match.
-              </p>
-
-              <p>
-                First, check the list above. If your event is somewhere that’s legally required to provide an interpreter,
-                ask them. You’ll get a qualified interpreter at their expense, and you’ll keep this pool free for the
-                moments that have nowhere else to go.
-              </p>
-
-              <p>
-                Tell us the basics: date, location, type of event. Keep sensitive details out of the form.
-              </p>
-
-            <p>
-            Once you’re matched, share what your interpreter should know. Names, signs, family dynamics,
-            anything that helps them serve you well.
-            </p>
-              
-            </ExpectationCard>
-
-            <ExpectationCard title="Before you volunteer">
-              <p>
-                These are unpaid assignments. Nothing here is billable, and no one will ask you to invoice.
-              </p>
-
-              <p>
-                Interpreting a wedding or a funeral is intimate work. Come prepared to meet the family, not just the event
-              </p>
-
-              <p>
-                Coordination is handled by volunteers and ITP students learning the work. Grace goes both directions.
-              </p>
-            </ExpectationCard>
-          </div>
-        </div>
-      </section>
-
       {/* COMMUNITY SECTION */}
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-6">
@@ -233,6 +180,60 @@ export default function LandingPage() {
         </div>
       </section>
 
+       <CoverageGuide />
+
+      {/* EXPECTATIONS */}
+      <section
+        aria-labelledby="expectations-heading"
+        className="border-y border-[#E5E7EB] bg-[#F5F6F7] py-16"
+      >
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 id="expectations-heading" className="sr-only">
+            What to know before getting started
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <ExpectationCard title="Before you request">
+              <p>
+                Every interpreter here is volunteering. There’s no fee, and there’s no guarantee. We’ll do our best to
+                find a match.
+              </p>
+
+              <p>
+                First, check the list above. If your event is somewhere that’s legally required to provide an interpreter,
+                ask them. You’ll get a qualified interpreter at their expense, and you’ll keep this pool free for the
+                moments that have nowhere else to go.
+              </p>
+
+              <p>
+                Tell us the basics: date, location, type of event. Keep sensitive details out of the form.
+              </p>
+
+            <p>
+            Once you’re matched, share what your interpreter should know. Names, signs, family dynamics,
+            anything that helps them serve you well.
+            </p>
+              
+            </ExpectationCard>
+
+            <ExpectationCard title="Before you volunteer">
+              <p>
+                These are unpaid assignments. Nothing here is billable, and no one will ask you to invoice.
+              </p>
+
+              <p>
+                Interpreting a wedding or a funeral is intimate work. Come prepared to meet the family, not just the event
+              </p>
+
+              <p>
+                Coordination is handled by volunteers and ITP students learning the work. Grace goes both directions.
+              </p>
+            </ExpectationCard>
+          </div>
+        </div>
+      </section>
+
+      
       {/* FOOTER */}
       <footer className="px-6 py-10 text-center text-sm text-[#6B7280]">
         <Link
