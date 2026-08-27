@@ -21,12 +21,39 @@ export default async function MyAssignmentsPage() {
   }
 
   const { data: rows, error } = await supabase
-    .from("assignments")
-   .select(
-  "id,status,created_at,accepted_at,declined_at,decline_reason,requests(id,title,event_address,event_start,event_end,event_type,description)"
-)
-    .eq("interpreter_id", user.id)
-    .order("created_at", { ascending: false });
+  .from("assignments")
+  .select(
+    "id,status,created_at,accepted_at,declined_at,decline_reason,request_id"
+  )
+  .eq("interpreter_id", user.id)
+  .order("created_at", { ascending: false });
+
+if (error) {
+  console.error("Interpreter assignments load error:", error);
+  throw new Error(`Could not load assignments: ${error.message}`);
+}
+
+const requestIds = rows?.map((row) => row.request_id) ?? [];
+
+const { data: requests, error: requestsError } = await supabase
+  .from("requests")
+  .select(
+    "id,title,event_address,event_start,event_end,event_type,description"
+  )
+  .in("id", requestIds);
+
+if (requestsError) {
+  console.error("Requests load error:", requestsError);
+  throw new Error(`Could not load requests: ${requestsError.message}`);
+}
+
+const rowsWithRequests =
+  rows?.map((row) => ({
+    ...row,
+    requests: requests?.find(
+      (request) => request.id === row.request_id
+    ),
+  })) ?? [];
 
   if (error) {
     console.error("Interpreter assignments load error:", error);
