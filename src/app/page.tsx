@@ -83,8 +83,8 @@ return (
           </div>
 
           <p className="mt-4 max-w-lg text-center text-sm leading-relaxed text-[#6B7280]">
-            Share just enough to make a match. Personal details stay between
-            you and your interpreter once you&apos;re connected.
+          Share just enough to make a match. Personal details stay between you and your
+          interpreter once you’re connected.
           </p>
         </div>
 
