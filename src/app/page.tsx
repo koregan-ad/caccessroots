@@ -168,13 +168,13 @@ export default function LandingPage() {
               to be caught up. One participant, describing a Christmas game with her own family, put it plainly.
             </p>
 
-            <blockquote className="rounded-r-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] px-6 py-5 italic text-[#374151]">
-              <p>“I so wanted to be a part of that. I felt so alone.”</p>
+           <blockquote className="rounded-r-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] px-6 py-5 text-center italic text-[#374151]">
+          <p>“I so wanted to be a part of that. I felt so alone.”</p>
 
-              <footer className="mt-2 text-sm not-italic text-[#6B7280]">
-                Study participant, Meek (2020)
-              </footer>
-            </blockquote>
+          <footer className="mt-2 text-sm not-italic text-[#6B7280]">
+          Study participant, Meek (2020)
+          </footer>
+          </blockquote>
 
             <p className="text-center">
               Interpreters and Deaf people built this profession together, in living rooms and church basements, long
