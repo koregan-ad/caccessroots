@@ -7,7 +7,11 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Wordmark } from "@/components/wordmark";
 import type { UserRole } from "@/lib/types";
 
-const ROLES: { value: UserRole; label: string; desc: string }[] = [
+const ROLES: {
+  value: UserRole;
+  label: string;
+  desc: string;
+}[] = [
   {
     value: "requestor",
     label: "I'm requesting an interpreter",
@@ -111,7 +115,9 @@ function SignUpForm() {
         {isInterpreter && <VolunteerRecruitingSection />}
 
         <div
-          className={`card w-full p-8 ${isInterpreter ? "mt-8 lg:mt-0" : ""}`}
+          className={`card w-full p-8 ${
+            isInterpreter ? "mt-8 lg:mt-0" : ""
+          }`}
         >
           <Link href="/" className="text-sm text-[#DB1F26]">
             ← Back
@@ -156,8 +162,13 @@ function SignUpForm() {
                   />
 
                   <div>
-                    <p className="font-medium text-[#0A0D12]">{r.label}</p>
-                    <p className="text-sm text-[#6B7280]">{r.desc}</p>
+                    <p className="font-medium text-[#0A0D12]">
+                      {r.label}
+                    </p>
+
+                    <p className="text-sm text-[#6B7280]">
+                      {r.desc}
+                    </p>
                   </div>
                 </div>
               </label>
@@ -169,6 +180,7 @@ function SignUpForm() {
               <label className="label" htmlFor="fullName">
                 Full name
               </label>
+
               <input
                 id="fullName"
                 required
@@ -183,6 +195,7 @@ function SignUpForm() {
               <label className="label" htmlFor="email">
                 Email
               </label>
+
               <input
                 id="email"
                 type="email"
@@ -198,6 +211,7 @@ function SignUpForm() {
               <label className="label" htmlFor="password">
                 Password
               </label>
+
               <input
                 id="password"
                 type="password"
@@ -208,6 +222,7 @@ function SignUpForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
               />
+
               <p className="mt-1 text-xs text-[#6B7280]">
                 At least 8 characters.
               </p>
@@ -247,57 +262,63 @@ function VolunteerRecruitingSection() {
   return (
     <section
       aria-labelledby="volunteer-recruiting-heading"
-      className="rounded-2xl bg-[#071B2A] p-7 text-white shadow-sm sm:p-9"
+      className="rounded-2xl bg-[#071B2A] p-7 shadow-sm sm:p-9"
     >
-      <p className="text-sm font-semibold uppercase tracking-wider text-[#F7A5A8]">
+      <p className="text-sm font-semibold uppercase tracking-wider text-[#FF9A9E]">
         Volunteer to interpret
       </p>
 
       <h1
         id="volunteer-recruiting-heading"
-        className="mt-3 font-serif text-4xl leading-tight sm:text-5xl"
+        className="mt-3 font-serif text-4xl font-medium leading-tight text-[#F9FAFB] sm:text-5xl"
       >
         The Code asks you to do this. It doesn’t tell you how to find it.
       </h1>
 
-      <p className="mt-6 leading-relaxed text-[#D8E1E8]">
+      <p className="mt-6 leading-relaxed text-[#E5E7EB]">
         The NAD-RID Code of Professional Conduct, Tenet 6.0, illustrative
         behavior 6.7:
       </p>
 
-      <blockquote className="mt-4 rounded-r-xl border-l-4 border-[#DB1F26] bg-white/10 px-5 py-4 text-lg italic leading-relaxed">
+      <blockquote className="mt-4 rounded-r-xl border-l-4 border-[#DB1F26] bg-white/10 px-5 py-4 text-lg italic leading-relaxed text-[#F9FAFB]">
         “Render pro bono services in a fair and reasonable manner.”
       </blockquote>
 
-      <div className="mt-6 space-y-5 leading-relaxed text-[#E7EDF1]">
+      <div className="mt-6 space-y-5 leading-relaxed text-[#E5E7EB]">
         <p>
-          For most interpreters, pro bono work arrives by accident. A friend of
-          a friend. A request after church. A text on a Tuesday night from
-          someone who happens to have your number. You say yes when you can and
-          carry the ones you couldn’t.
+          For most interpreters, pro bono work arrives by accident. A
+          friend of a friend. A request after church. A text on a Tuesday
+          night from someone who happens to have your number. You say yes
+          when you can and carry the ones you couldn’t.
         </p>
 
         <p>
-          Ten years ago, an interpreter writing on StreetLeverage named the
-          problem exactly:
+          Ten years ago, an interpreter writing on StreetLeverage named
+          the problem exactly:
         </p>
 
-        <blockquote className="rounded-r-xl border-l-4 border-[#F7A5A8] bg-white/10 px-5 py-4 italic leading-relaxed">
+        <blockquote className="rounded-r-xl border-l-4 border-[#FF9A9E] bg-white/10 px-5 py-4 italic leading-relaxed text-[#F9FAFB]">
           <p>
             “There are still life events and activities where the only
             stakeholder is the Deaf or DeafBlind individual. No agency is
             offering a service that would mandate hiring a sign language
             interpreter.”
           </p>
-          <footer className="mt-3 text-sm not-italic text-[#B9C6D0]">
-            Mala, <cite>Giving Back: Have Sign Language Interpreters Forgotten Their Roots?</cite>, StreetLeverage, 2015
+
+          <footer className="mt-3 text-sm not-italic text-[#CBD5E1]">
+            Mala,{" "}
+            <cite>
+              Giving Back: Have Sign Language Interpreters Forgotten Their
+              Roots?
+            </cite>
+            , StreetLeverage, 2015
           </footer>
         </blockquote>
 
         <p>
-          That’s what this is. Requests you can see, filtered to a distance you
-          can drive, in a volume you can choose. Fair and reasonable becomes
-          something you can point to.
+          That’s what this is. Requests you can see, filtered to a distance
+          you can drive, in a volume you can choose. Fair and reasonable
+          becomes something you can point to.
         </p>
       </div>
     </section>
@@ -309,7 +330,10 @@ function AuthLoading() {
     <main className="grid min-h-screen place-items-center bg-[#FAFAFA] px-4">
       <div className="card w-full max-w-xl p-8">
         <Wordmark size="sm" href={null} />
-        <p className="mt-4 text-sm text-[#6B7280]">Loading sign up…</p>
+
+        <p className="mt-4 text-sm text-[#6B7280]">
+          Loading sign up…
+        </p>
       </div>
     </main>
   );
