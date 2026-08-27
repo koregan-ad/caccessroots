@@ -107,17 +107,17 @@ return (
 
           <Feature
             title="Your circle, respected"
-            desc="Deaf communities are small. Name anyone you'd rather not be matched with, and they'll never see your request. No explanation needed."
+            desc="Deaf communities are small. Name anyone you’d rather not be matched with, and they’ll never see your request. No explanation needed."
           />
 
           <Feature
             title="A person looks first"
-            desc="Tender requests — a funeral, a family conflict, a first meeting — get a coordinator's eyes before anyone is matched. You don't have to explain why it's tender."
+            desc="Tender requests, like a funeral, a family conflict, or a first meeting, get a coordinator’s eyes before anyone is matched. You don’t have to explain why it’s tender."
           />
 
           <Feature
             title="Rooted in community"
-            desc="Deaf organizations can vouch for their members and see what's happening locally. This grows through people who already know each other."
+            desc="Deaf organizations can vouch for their members and see what’s happening locally. This grows through people who already know each other."
           />
         </ul>
       </div>
