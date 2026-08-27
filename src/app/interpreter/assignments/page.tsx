@@ -22,9 +22,9 @@ export default async function MyAssignmentsPage() {
 
   const { data: rows, error } = await supabase
     .from("assignments")
-    .select(
-      "id,status,created_at,accepted_at,declined_at,decline_reason,request(id,title,event_address,event_start,event_end,event_type,description)"
-    )
+   .select(
+  "id,status,created_at,accepted_at,declined_at,decline_reason,requests(id,title,event_address,event_start,event_end,event_type,description)"
+)
     .eq("interpreter_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -58,25 +58,25 @@ export default async function MyAssignmentsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-ink-subtle capitalize">
-                    {row.request?.event_type?.replace("_", " ")}
+                    {row.requests?.event_type?.replace("_", " ")}
                   </p>
 
                   <h3 className="font-semibold mt-1">
-                    {row.request?.title}
+                    {row.requests?.title}
                   </h3>
 
                   <p className="text-sm text-ink-muted mt-1">
-                    {row.request?.event_start
-                      ? formatDateTime(row.request.event_start)
+                    {row.requests?.event_start
+                      ? formatDateTime(row.requests.event_start)
                       : ""}
-                    {row.request?.event_address
-                      ? ` — ${row.request.event_address}`
+                    {row.requests?.event_address
+                      ? ` — ${row.requests.event_address}`
                       : ""}
                   </p>
 
-                  {row.request?.description && (
+                  {row.requests?.description && (
                     <p className="text-sm mt-2">
-                      {row.request.description}
+                      {row.requests.description}
                     </p>
                   )}
                 </div>
