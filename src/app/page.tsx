@@ -101,29 +101,31 @@ return (
 
         <ul className="space-y-5 text-sm">
           <Feature
-            title="Close to home"
+            title="Close To Home"
             desc="Matching starts with geography. Interpreters see requests within a distance they can actually travel, so giving back fits around real life."
           />
 
           <Feature
-            title="Your circle, respected"
+            title="Your Circle, Respected"
             desc="Deaf communities are small. Name anyone you’d rather not be matched with, and they’ll never see your request. No explanation needed."
           />
 
           <Feature
-            title="A person looks first"
+            title="A Person Looks First"
             desc="Tender requests, like a funeral, a family conflict, or a first meeting, get a coordinator’s eyes before anyone is matched. You don’t have to explain why it’s tender."
           />
 
           <Feature
-            title="Rooted in community"
+            title="Rooted In Community"
             desc="Deaf organizations can vouch for their members and see what’s happening locally. This grows through people who already know each other."
           />
         </ul>
       </div>
     </div>
   </section>
-
+          
+  <CoverageGuide />
+          
   {/* EXPECTATIONS */}
   <section
     aria-labelledby="expectations-heading"
@@ -244,6 +246,269 @@ return (
   </div>
 </li>
 );
+}
+
+function CoverageGuide() {
+  const covered = [
+    {
+      where: "Hospitals, doctors, dentists, therapists, urgent care, and labs",
+      detail: "The provider. Every appointment, regardless of practice size.",
+    },
+    {
+      where: "Courts, police, jury duty, DMV, city council, and government offices",
+      detail: "The government agency.",
+    },
+    {
+      where: "Public schools",
+      detail:
+        "The school district—including IEP meetings, parent-teacher conferences, disciplinary hearings, and school events.",
+    },
+    {
+      where: "Colleges, universities, trade schools, and adult education",
+      detail: "The institution.",
+    },
+    {
+      where: "Your job, if your employer has 15 or more employees",
+      detail:
+        "Your employer—including interviews, meetings, training, and workplace events.",
+    },
+    {
+      where: "Businesses open to the public",
+      detail:
+        "The business—including hotels, restaurants, banks, gyms, theaters, retail stores, funeral homes, and salons.",
+    },
+    {
+      where: "Programs that receive federal money",
+      detail:
+        "The program, including many nonprofits, clinics, and housing programs.",
+    },
+  ];
+
+  const notCovered = [
+    {
+      where: "Religious organizations and activities they operate",
+      detail:
+        "Religious organizations are generally exempt from the ADA. This can include weddings, funerals, baptisms, and services held in houses of worship.",
+    },
+    {
+      where: "Private homes",
+      detail:
+        "Family dinners, baby showers, birthday parties, and family meetings normally have no covered organization responsible for access.",
+    },
+    {
+      where: "Events hosted by a private person",
+      detail:
+        "Wedding receptions, graduation parties, memorials at someone’s home, and private retirement dinners.",
+    },
+    {
+      where: "Informal and volunteer-run groups",
+      detail:
+        "Book clubs, neighborhood associations, informal sports, and similar groups may not be covered entities.",
+    },
+    {
+      where: "Private clubs that genuinely limit membership",
+      detail: "Private clubs may be exempt from the ADA.",
+    },
+    {
+      where: "Your job, if your employer has fewer than 15 employees",
+      detail: "Federal employment protections generally begin at 15 employees.",
+    },
+    {
+      where: "The graveside",
+      detail:
+        "The funeral home’s services may be covered, while the cemetery service and gathering afterward usually are not.",
+    },
+  ];
+
+  return (
+    <section
+      id="coverage-guide"
+      aria-labelledby="coverage-heading"
+      className="border-y border-[#E5E7EB] bg-white py-16 md:py-20"
+    >
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#DB1F26]">
+            Know your rights
+          </p>
+
+          <h2
+            id="coverage-heading"
+            className="mt-3 font-serif text-3xl leading-tight text-[#0A0D12] md:text-4xl"
+          >
+            Before you ask us, check whether someone already owes you.
+          </h2>
+
+          <p className="mt-5 text-lg leading-relaxed text-[#374151]">
+            Plenty of places are legally required to provide communication
+            access and pay for it. If your event is one of them, ask that
+            organization first. CAccessRoots exists for moments nobody is
+            required to cover.
+          </p>
+        </div>
+
+        <div className="mt-12">
+          <CoverageTable
+            title="Covered: someone else is responsible"
+            description="You should not have to pay for these, and you should not need a volunteer."
+            detailHeading="Who is responsible"
+            rows={covered}
+          />
+        </div>
+
+        <div className="mx-auto mt-10 max-w-4xl rounded-2xl border border-[#F3C4C6] bg-[#FCEBEC] p-6 md:p-8">
+          <h3 className="font-serif text-2xl text-[#0A0D12]">
+            Two things worth knowing
+          </h3>
+
+          <div className="mt-4 space-y-4 leading-relaxed text-[#374151]">
+            <p>
+              A covered organization generally cannot charge a person with a
+              disability for the cost of an interpreter or other auxiliary
+              aid.
+            </p>
+
+            <p>
+              The standard is effective communication—not necessarily an
+              interpreter in every situation. For complex, high-stakes, or long
+              conversations, a qualified interpreter is often appropriate.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <CoverageTable
+            title="Not covered: nobody may be required to provide it"
+            description="This is where CAccessRoots may be able to help."
+            detailHeading="Why it may not be covered"
+            rows={notCovered}
+          />
+        </div>
+
+        <div className="mx-auto mt-12 max-w-4xl">
+          <h3 className="font-serif text-2xl text-[#0A0D12] md:text-3xl">
+            It depends: the confusing middle
+          </h3>
+
+          <div className="mt-6 space-y-6 leading-relaxed text-[#374151]">
+            <div>
+              <h4 className="font-semibold text-[#0A0D12]">A funeral</h4>
+              <p className="mt-1">
+                The funeral home’s arrangements, paperwork, and conversations
+                may be covered. A church service, eulogy, graveside service, or
+                private reception may not be.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-[#0A0D12]">
+                A wedding at a hotel or venue
+              </h4>
+              <p className="mt-1">
+                The venue may be responsible for access to its own services,
+                such as the front desk and event staff. That does not
+                necessarily cover the vows, toasts, or speeches.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-[#0A0D12]">
+                A recreation league or community class
+              </h4>
+              <p className="mt-1">
+                A program operated by a city, public library, or college may be
+                covered. An informal group organized by neighbors may not be.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-[#0A0D12]">
+                Your state may provide additional protections
+              </h4>
+              <p className="mt-1">
+                State and local requirements can go beyond federal law. Check
+                with your state’s Deaf and hard-of-hearing commission before
+                assuming an event is not covered.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-12 max-w-4xl border-t border-[#E5E7EB] pt-8">
+          <p className="leading-relaxed text-[#374151]">
+            Even where the law is on your side, requesting and receiving access
+            can be two different things. If a covered organization refuses,
+            that is worth pursuing. If nobody was required to provide access,
+            that is worth a request here.
+          </p>
+
+          <p className="mt-5 text-sm italic leading-relaxed text-[#6B7280]">
+            This is a plain-language summary, not legal advice. If you have
+            been denied an interpreter by an organization that may be required
+            to provide one, contact the National Association of the Deaf or
+            your state’s Deaf and hard-of-hearing commission.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CoverageTable({
+  title,
+  description,
+  detailHeading,
+  rows,
+}: {
+  title: string;
+  description: string;
+  detailHeading: string;
+  rows: Array<{ where: string; detail: string }>;
+}) {
+  return (
+    <div>
+      <h3 className="font-serif text-2xl text-[#0A0D12] md:text-3xl">
+        {title}
+      </h3>
+
+      <p className="mt-2 leading-relaxed text-[#374151]">{description}</p>
+
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-[#D1D5DB]">
+        <table className="w-full min-w-[700px] border-collapse bg-white text-left">
+          <thead className="bg-[#071B2A] text-white">
+            <tr>
+              <th scope="col" className="w-2/5 px-5 py-4 font-semibold">
+                Where
+              </th>
+              <th scope="col" className="px-5 py-4 font-semibold">
+                {detailHeading}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-[#D1D5DB]">
+            {rows.map((row, index) => (
+              <tr
+                key={row.where}
+                className={index % 2 === 0 ? "bg-white" : "bg-[#F5F6F7]"}
+              >
+                <th
+                  scope="row"
+                  className="px-5 py-4 align-top font-semibold text-[#0A0D12]"
+                >
+                  {row.where}
+                </th>
+
+                <td className="px-5 py-4 align-top leading-relaxed text-[#374151]">
+                  {row.detail}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
 
 function ExpectationCard({
