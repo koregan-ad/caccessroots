@@ -466,12 +466,14 @@ function CoverageTable({
   rows: Array<{ where: string; detail: string }>;
 }) {
   return (
-    <div>
-      <h3 className="font-serif text-2xl text-[#0A0D12] md:text-3xl">
-        {title}
-      </h3>
+  <div>
+    <h3 className="text-center font-serif text-2xl text-[#0A0D12] md:text-3xl">
+      {title}
+    </h3>
 
-      <p className="mt-2 leading-relaxed text-[#374151]">{description}</p>
+    <p className="mx-auto mt-2 max-w-3xl text-center leading-relaxed text-[#374151]">
+      {description}
+    </p>
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-[#D1D5DB]">
         <table className="w-full min-w-[700px] border-collapse bg-white text-left">
