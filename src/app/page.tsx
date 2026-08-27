@@ -53,16 +53,15 @@ return (
 
         <div className="mt-6 max-w-lg space-y-4 text-lg leading-relaxed text-[#374151]">
           <p>
-            No law covers a wedding. No funeral is guaranteed to cover
-            access. These are the gatherings where access matters most — and
-            where nobody is required to provide it.
+          Nobody is required to provide an interpreter at a wedding. Or a funeral. Or a family meeting about 
+          your mother’s care. These are the rooms where being understood matters most, and they are exactly the
+          rooms the law does not reach.
           </p>
 
           <p>
-            CAccessRoots connects Deaf people with nationally certified
-            interpreters who volunteer their time for these moments. No
-            agency, no invoice, no contract. Just people showing up for each
-            other, the way this work started.
+          CAccessRoots connects Deaf people with qualified interpreters who volunteer their time for these
+          moments. No agency. No invoice. No contract. Just people showing up for each other, the way this 
+          work started.
           </p>
         </div>
 
