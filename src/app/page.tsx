@@ -147,28 +147,25 @@ export default function LandingPage() {
 
           <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
             <p>
-              Funerals. Wedding ceremonies. A family meeting about Mom’s care.
-              A hiking group that meets every Saturday morning.
+              Funerals. Wedding ceremonies. A family meeting about Mom’s care. A hiking group that meets every
+              Saturday morning.
             </p>
 
             <p>
-              The law follows institutions. It requires communication access
-              at the hospital, the courthouse, the school, and the employer.
-              It stops at the church door, the graveside, the reception hall,
-              and the living room. In those rooms, nobody may be legally
-              required to provide access.
+              The law follows institutions. It requires an interpreter at the hospital, the courthouse, the school, the
+              employer. It stops at the church door, the graveside, the reception hall, and the living room. In those
+              rooms nobody is entitled to access, and nobody is entitled to be paid for providing it.
             </p>
 
             <p>
-              That means the moments most likely to go unshared are often the
-              ones a person actually remembers—not the deposition, but the
-              eulogy.
+              Which means the moments most likely to go unshared are the ones a person actually remembers. Not
+              the deposition. The eulogy.
             </p>
 
             <p>
-              Researchers have a name for what can happen instead: dinner
-              table syndrome—sitting in a room full of family, watching
-              conversations happen, and waiting to be caught up.
+              Researchers have a name for what happens instead. In a 2020 study in The Qualitative Report, Deaf
+              adults described dinner table syndrome: sitting in a room full of family, watching mouths move, waiting
+              to be caught up. One participant, describing a Christmas game with her own family, put it plainly.
             </p>
 
             <blockquote className="rounded-r-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] px-6 py-5 italic text-[#374151]">
@@ -180,9 +177,8 @@ export default function LandingPage() {
             </blockquote>
 
             <p>
-              Interpreters and Deaf people built this profession together, in
-              living rooms and church basements, long before there were
-              contracts. CAccessRoots is a way back to that.
+              Interpreters and Deaf people built this profession together, in living rooms and church basements, long
+              before there were contracts. CAccessRoots is a way back to that.
             </p>
           </div>
         </div>
