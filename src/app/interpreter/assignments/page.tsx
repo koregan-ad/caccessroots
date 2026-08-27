@@ -8,20 +8,38 @@ import {
 } from "./actions";
 
 export default async function MyAssignmentsPage() {
-  const profile = await requireProfile();
+  await requireProfile();
+
   const supabase = createSupabaseServerClient();
 
-  const { data: rows } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Not signed in");
+  }
+
+  const { data: rows, error } = await supabase
     .from("assignments")
     .select(
       "id,status,created_at,accepted_at,declined_at,decline_reason,request(id,title,event_address,event_start,event_end,event_type,description)"
     )
-    .eq("interpreter_id", profile.id)
+    .eq("interpreter_id", user.id)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Interpreter assignments load error:", error);
+
+    throw new Error(
+      `Could not load assignments: ${error.message}`
+    );
+  }
 
   return (
     <div>
       <h1 className="text-2xl font-semibold">My assignments</h1>
+
       <p className="text-ink-muted mt-1">
         Released assignments are waiting for your accept or decline.
       </p>
@@ -48,8 +66,12 @@ export default async function MyAssignmentsPage() {
                   </h3>
 
                   <p className="text-sm text-ink-muted mt-1">
-                    {formatDateTime(row.request?.event_start)} —{" "}
-                    {row.request?.event_address}
+                    {row.request?.event_start
+                      ? formatDateTime(row.request.event_start)
+                      : ""}
+                    {row.request?.event_address
+                      ? ` — ${row.request.event_address}`
+                      : ""}
                   </p>
 
                   {row.request?.description && (
@@ -67,7 +89,11 @@ export default async function MyAssignmentsPage() {
               {row.status === "released" && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   <form action={acceptAssignmentAction}>
-                    <input type="hidden" name="id" value={row.id} />
+                    <input
+                      type="hidden"
+                      name="id"
+                      value={row.id}
+                    />
 
                     <button className="btn-primary text-sm py-1.5 px-3">
                       Accept
@@ -78,7 +104,11 @@ export default async function MyAssignmentsPage() {
                     action={declineAssignmentAction}
                     className="flex flex-wrap gap-2"
                   >
-                    <input type="hidden" name="id" value={row.id} />
+                    <input
+                      type="hidden"
+                      name="id"
+                      value={row.id}
+                    />
 
                     <input
                       name="decline_reason"
@@ -104,7 +134,11 @@ export default async function MyAssignmentsPage() {
                     action={withdrawAssignmentAction}
                     className="flex flex-wrap gap-2"
                   >
-                    <input type="hidden" name="id" value={row.id} />
+                    <input
+                      type="hidden"
+                      name="id"
+                      value={row.id}
+                    />
 
                     <input
                       name="decline_reason"
@@ -154,7 +188,9 @@ export default async function MyAssignmentsPage() {
         })}
 
         {(!rows || rows.length === 0) && (
-          <p className="text-ink-muted">No assignments yet.</p>
+          <p className="text-ink-muted">
+            No assignments yet.
+          </p>
         )}
       </div>
     </div>
