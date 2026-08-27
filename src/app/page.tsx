@@ -403,8 +403,8 @@ function CoverageGuide() {
         {/* COVERED */}
         <div className="mt-12">
           <CoverageTable
-            title="Covered: someone else is responsible"
-            description="You should not have to pay for these, and you should not need a volunteer."
+            title="Covered: someone else has to provide it, and they have to pay"
+            description="You should not be paying for these, and you should not need a volunteer."
             detailHeading="Who is responsible"
             rows={covered}
           />
@@ -418,16 +418,15 @@ function CoverageGuide() {
 
           <div className="mt-4 space-y-4 leading-relaxed text-[#374151]">
             <p>
-              A covered organization generally cannot charge a person with a
-              disability for the cost of an interpreter or other auxiliary
-              aid.
+              They cannot charge you for it. Federal regulation is explicit: a business may not impose a surcharge on a
+              person with a disability to cover the cost of an interpreter (28 CFR § 36.301(c)). If someone tells you to
+              bring your own interpreter or pay for one yourself, that is not how it works.
             </p>
 
             <p>
-              The standard is effective communication—not necessarily an
-              interpreter in every situation. For complex, high-stakes, or
-              long conversations, a qualified interpreter is often
-              appropriate.
+              The standard is effective communication, not “an interpreter, always.” A covered place has to give you
+              what actually works for you. For a complex, high-stakes, or long conversation, that is usually a qualified
+              interpreter. Written notes are not a substitute for a diagnosis, a court hearing, or a job interview.
             </p>
           </div>
         </div>
@@ -435,8 +434,8 @@ function CoverageGuide() {
         {/* NOT COVERED */}
         <div className="mt-12">
           <CoverageTable
-            title="Not covered: nobody may be required to provide it"
-            description="This is where CAccessRoots may be able to help."
+            title="Not covered: nobody is required to provide anything"
+            description="This is where CAccessRoots comes in."
             detailHeading="Why it may not be covered"
             rows={notCovered}
           />
@@ -455,9 +454,10 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                The funeral home’s arrangements, paperwork, and conversations
-                may be covered. A church service, eulogy, graveside service,
-                or private reception may not be.
+                The funeral home’s own services are covered, so the arrangements meeting, the paperwork,
+                and the director’s conversations with your family should be interpreted at their expense. The church
+                service, the eulogy, the graveside, and the reception are not. That split is why so many Deaf people end
+                up with a relative interpreting their own father’s funeral.
               </p>
             </div>
 
@@ -467,9 +467,9 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                The venue may be responsible for access to its own services,
-                such as the front desk and event staff. That does not
-                necessarily cover the vows, toasts, or speeches.
+                The venue owes you effective communication for its own services, like
+                the front desk and the event staff. Nobody owes anyone the vows, the toasts, or the speeches. That is
+                the part you actually came for.
               </p>
             </div>
 
@@ -479,21 +479,19 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                A program operated by a city, public library, or college may
-                be covered. An informal group organized by neighbors may not
-                be.
+               If it runs through a city parks department, a public library, or a college,
+               it’s covered. If it’s a group of neighbors with a group chat, it isn’t.
               </p>
             </div>
 
             <div>
               <h4 className="font-semibold text-[#0A0D12]">
-                Your state may provide additional protections
+                Your state may go further than federal law.
               </h4>
 
               <p className="mt-1">
-                State and local requirements can go beyond federal law. Check
-                with your state’s Deaf and hard-of-hearing commission before
-                assuming an event is not covered.
+                Some states have stronger requirements or a commission
+                that helps fund interpreters for community events. Worth a phone call before assuming no.
               </p>
             </div>
           </div>
