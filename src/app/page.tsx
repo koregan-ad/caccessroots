@@ -497,7 +497,7 @@ function CoverageGuide() {
           </div>
         </div>
 
-        <div className="mx-auto mt-12 max-w-4xl border-t border-[#E5E7EB] pt-8">
+       <div className="mx-auto mt-12 max-w-4xl border-t border-[#E5E7EB] pt-8 text-center">
           <p className="leading-relaxed text-[#374151]">
             Even where the law is on your side, requesting and receiving
             access can be two different things. If a covered organization
