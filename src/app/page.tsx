@@ -161,8 +161,6 @@ export default function LandingPage() {
             </p>
               
             </ExpectationCard>
-            </ExpectationCard>
-            </ExpectationCard>
 
             <ExpectationCard title="Before you volunteer">
               <p>
