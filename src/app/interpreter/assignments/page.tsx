@@ -51,7 +51,7 @@ export default async function MyAssignmentsPage() {
 
           const displayStatus = wasWithdrawn
             ? "Withdrawn"
-            : row.status.replace("_", " ");
+            : row.status?.replace("_", " ") ?? "";
 
           return (
             <div key={row.id} className="card p-5">
