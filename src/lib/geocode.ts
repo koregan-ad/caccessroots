@@ -2,7 +2,7 @@
 // Server-only — pass results to client. Token is public-by-design but we still
 // fetch from the server to keep keys consistent and add basic caching later.
 
-const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+const token = process.env.NEXT_MAPBOX_TOKEN;
 
 export interface GeocodeResult {
   longitude: number;
