@@ -6,59 +6,170 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function proposeAssignmentAction(formData: FormData) {
   const supabase = createSupabaseServerClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) throw new Error("Not signed in");
 
-  const request_id = String(formData.get("request_id"));
-  const interpreter_id = String(formData.get("interpreter_id"));
+  const request_id = String(formData.get("request_id") ?? "");
+  const interpreter_id = String(formData.get("interpreter_id") ?? "");
 
-  // The DB trigger downgrades status to pending_admin_release for sensitive requests.
-  const { error } = await supabase.from("assignments").insert({
-    request_id,
-    interpreter_id,
-    proposed_by: user.id,
-    status: "proposed",
-  });
-  if (error) throw new Error(error.message);
+  if (!request_id || !interpreter_id) {
+    throw new Error("Missing request or interpreter");
+  }
 
-  // Bump the request status
-  const { data: req } = await supabase
+  /*
+   * Check whether this interpreter already has an assignment
+   * record for this request.
+   *
+   * This can happen when:
+   * - the interpreter previously declined
+   * - the interpreter previously accepted and later withdrew
+   * - the coordinator is trying the same interpreter again
+   */
+  const { data: existingAssignment, error: existingError } = await supabase
+    .from("assignments")
+    .select("id,status")
+    .eq("request_id", request_id)
+    .eq("interpreter_id", interpreter_id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existingError) {
+    throw new Error(existingError.message);
+  }
+
+  let assignmentId: string;
+
+  if (existingAssignment) {
+    /*
+     * Do not create a duplicate assignment.
+     * Re-release the existing record instead.
+     */
+    const { data: updatedAssignment, error: updateError } = await supabase
+      .from("assignments")
+      .update({
+        status: "proposed",
+        proposed_by: user.id,
+
+        released_by: null,
+        released_at: null,
+
+        accepted_at: null,
+
+        declined_at: null,
+        decline_reason: null,
+      })
+      .eq("id", existingAssignment.id)
+      .select("id")
+      .single();
+
+    if (updateError) {
+      throw new Error(updateError.message);
+    }
+
+    assignmentId = updatedAssignment.id;
+  } else {
+    /*
+     * No previous assignment exists for this interpreter/request,
+     * so create a new one.
+     */
+    const { data: newAssignment, error: insertError } = await supabase
+      .from("assignments")
+      .insert({
+        request_id,
+        interpreter_id,
+        proposed_by: user.id,
+        status: "proposed",
+      })
+      .select("id")
+      .single();
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+
+    assignmentId = newAssignment.id;
+  }
+
+  const { data: req, error: requestLookupError } = await supabase
     .from("requests")
     .select("sensitivity")
     .eq("id", request_id)
     .single();
 
+  if (requestLookupError) {
+    throw new Error(requestLookupError.message);
+  }
+
   if (req?.sensitivity === "sensitive") {
-    // Add to approvals queue
-    await supabase.from("approvals").insert({
-      kind: "sensitive_assignment",
-      target_table: "assignments",
-      target_id: request_id, // resolved by approver via lookup
-      requested_by: user.id,
-      requires_two_keys: false,
-      context: { request_id, interpreter_id },
-    });
-    await supabase.from("requests").update({ status: "proposed" }).eq("id", request_id);
+    /*
+     * Sensitive requests go through approval before release.
+     */
+    const { error: approvalError } = await supabase
+      .from("approvals")
+      .insert({
+        kind: "sensitive_assignment",
+        target_table: "assignments",
+        target_id: assignmentId,
+        requested_by: user.id,
+        requires_two_keys: false,
+        context: {
+          request_id,
+          interpreter_id,
+          assignment_id: assignmentId,
+        },
+      });
+
+    if (approvalError) {
+      throw new Error(approvalError.message);
+    }
+
+    const { error: requestError } = await supabase
+      .from("requests")
+      .update({ status: "proposed" })
+      .eq("id", request_id);
+
+    if (requestError) {
+      throw new Error(requestError.message);
+    }
   } else {
-    // Standard sensitivity → release immediately to the interpreter for accept/decline
-    await supabase
+    /*
+     * Standard request:
+     * release immediately to the interpreter.
+     */
+    const { error: releaseError } = await supabase
       .from("assignments")
       .update({
         status: "released",
         released_by: user.id,
         released_at: new Date().toISOString(),
       })
-      .eq("request_id", request_id)
-      .eq("interpreter_id", interpreter_id)
+      .eq("id", assignmentId)
       .eq("status", "proposed");
-    await supabase
+
+    if (releaseError) {
+      throw new Error(releaseError.message);
+    }
+
+    const { error: requestError } = await supabase
       .from("requests")
       .update({ status: "pending_acceptance" })
       .eq("id", request_id);
+
+    if (requestError) {
+      throw new Error(requestError.message);
+    }
   }
 
   revalidatePath("/coordinator");
+  revalidatePath(`/coordinator/requests/${request_id}`);
+  revalidatePath("/interpreter/assignments");
+  revalidatePath("/interpreter/open-requests");
+  revalidatePath("/requestor/requests");
+
   redirect("/coordinator");
 }
