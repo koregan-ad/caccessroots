@@ -64,10 +64,10 @@ export default function LandingPage() {
               </p>
 
               <p>
-                CAccessRoots connects Deaf people with qualified
-                interpreters who volunteer their time for these moments.
-                No agency. No invoice. No contract. Just people showing up
-                for each other, the way this work started.
+                CAccessRoots connects Deaf people with qualified interpreters
+                who volunteer their time for these moments. No agency. No
+                invoice. No contract. Just people showing up for each other,
+                the way this work started.
               </p>
             </div>
 
@@ -99,7 +99,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* MATCHING CARD */}
+          {/* WHY CACCESROOTS */}
           <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm md:p-8">
             <h2 className="mb-6 font-serif text-2xl text-[#0A0D12]">
               Why CAccessRoots
@@ -147,22 +147,22 @@ export default function LandingPage() {
 
           <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-[#374151]">
             <p>
-              Funerals. Wedding ceremonies. A family meeting about Mom’s
-              care. A hiking group that meets every Saturday morning.
+              Funerals. Wedding ceremonies. A family meeting about Mom’s care.
+              A hiking group that meets every Saturday morning.
             </p>
 
             <p>
-              The law follows institutions. It requires communication
-              access at the hospital, the courthouse, the school, and the
-              employer. It stops at the church door, the graveside, the
-              reception hall, and the living room. In those rooms, nobody
-              may be legally required to provide access.
+              The law follows institutions. It requires communication access
+              at the hospital, the courthouse, the school, and the employer.
+              It stops at the church door, the graveside, the reception hall,
+              and the living room. In those rooms, nobody may be legally
+              required to provide access.
             </p>
 
             <p>
-              That means the moments most likely to go unshared are often
-              the ones a person actually remembers—not the deposition, but
-              the eulogy.
+              That means the moments most likely to go unshared are often the
+              ones a person actually remembers—not the deposition, but the
+              eulogy.
             </p>
 
             <p>
@@ -180,8 +180,8 @@ export default function LandingPage() {
             </blockquote>
 
             <p>
-              Interpreters and Deaf people built this profession together,
-              in living rooms and church basements, long before there were
+              Interpreters and Deaf people built this profession together, in
+              living rooms and church basements, long before there were
               contracts. CAccessRoots is a way back to that.
             </p>
           </div>
@@ -201,17 +201,15 @@ export default function LandingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <ExpectationCard title="Before you request">
               <p>
-                Every interpreter here is volunteering. There’s no fee,
-                and there’s no guarantee. We’ll do our best to find a
-                match.
+                Every interpreter here is volunteering. There’s no fee, and
+                there’s no guarantee. We’ll do our best to find a match.
               </p>
 
               <p>
-                First, check the list above. If your event is somewhere
-                that’s legally required to provide an interpreter, ask
-                them. You’ll get a qualified interpreter at their expense,
-                and you’ll keep this pool free for the moments that have
-                nowhere else to go.
+                First, check the list above. If your event is somewhere that’s
+                legally required to provide an interpreter, ask them. You’ll
+                get a qualified interpreter at their expense, and you’ll keep
+                this pool free for the moments that have nowhere else to go.
               </p>
 
               <p>
@@ -220,16 +218,16 @@ export default function LandingPage() {
               </p>
 
               <p>
-                Once you’re matched, share what your interpreter should
-                know. Names, signs, family dynamics, anything that helps
-                them serve you well.
+                Once you’re matched, share what your interpreter should know.
+                Names, signs, family dynamics, anything that helps them serve
+                you well.
               </p>
             </ExpectationCard>
 
             <ExpectationCard title="Before you volunteer">
               <p>
-                These are unpaid assignments. Nothing here is billable, and
-                no one will ask you to invoice.
+                These are unpaid assignments. Nothing here is billable, and no
+                one will ask you to invoice.
               </p>
 
               <p>
@@ -238,8 +236,8 @@ export default function LandingPage() {
               </p>
 
               <p>
-                Coordination is handled by volunteers and ITP students
-                learning the work. Grace goes both directions.
+                Coordination is handled by volunteers and ITP students learning
+                the work. Grace goes both directions.
               </p>
             </ExpectationCard>
           </div>
@@ -263,8 +261,8 @@ export default function LandingPage() {
         </Link>
 
         <p className="mt-4 italic">
-          A pro bono initiative of Applied Development. No fees, no
-          invoices, no contracts—for anyone.
+          A pro bono initiative of Applied Development. No fees, no invoices,
+          no contracts—for anyone.
         </p>
 
         <p className="mt-2 text-xs text-[#6B7280]">
@@ -339,8 +337,7 @@ function CoverageGuide() {
 
   const notCovered = [
     {
-      where:
-        "Religious organizations and activities they operate",
+      where: "Religious organizations and activities they operate",
       detail:
         "Religious organizations are generally exempt from the ADA. This can include weddings, funerals, baptisms, and services held in houses of worship.",
     },
@@ -382,6 +379,7 @@ function CoverageGuide() {
       className="border-y border-[#E5E7EB] bg-white py-16 md:py-20"
     >
       <div className="mx-auto max-w-6xl px-6">
+        {/* INTRO */}
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-[#DB1F26]">
             Know your rights
@@ -395,13 +393,14 @@ function CoverageGuide() {
           </h2>
 
           <p className="mt-5 text-lg leading-relaxed text-[#374151]">
-            Plenty of places are legally required to provide
-            communication access and pay for it. If your event is one of
-            them, ask that organization first. CAccessRoots exists for
-            moments nobody is required to cover.
+            Plenty of places are legally required to provide communication
+            access and pay for it. If your event is one of them, ask that
+            organization first. CAccessRoots exists for moments nobody is
+            required to cover.
           </p>
         </div>
 
+        {/* COVERED */}
         <div className="mt-12">
           <CoverageTable
             title="Covered: someone else is responsible"
@@ -411,6 +410,7 @@ function CoverageGuide() {
           />
         </div>
 
+        {/* TWO THINGS WORTH KNOWING */}
         <div className="mx-auto mt-10 max-w-4xl rounded-2xl border border-[#F3C4C6] bg-[#FCEBEC] p-6 md:p-8">
           <h3 className="font-serif text-2xl text-[#0A0D12]">
             Two things worth knowing
@@ -418,9 +418,9 @@ function CoverageGuide() {
 
           <div className="mt-4 space-y-4 leading-relaxed text-[#374151]">
             <p>
-              A covered organization generally cannot charge a person with
-              a disability for the cost of an interpreter or other
-              auxiliary aid.
+              A covered organization generally cannot charge a person with a
+              disability for the cost of an interpreter or other auxiliary
+              aid.
             </p>
 
             <p>
@@ -432,6 +432,7 @@ function CoverageGuide() {
           </div>
         </div>
 
+        {/* NOT COVERED */}
         <div className="mt-12">
           <CoverageTable
             title="Not covered: nobody may be required to provide it"
@@ -441,6 +442,7 @@ function CoverageGuide() {
           />
         </div>
 
+        {/* CONFUSING MIDDLE */}
         <div className="mx-auto mt-12 max-w-4xl">
           <h3 className="font-serif text-2xl text-[#0A0D12] md:text-3xl">
             It depends: the confusing middle
@@ -453,9 +455,9 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                The funeral home’s arrangements, paperwork, and
-                conversations may be covered. A church service, eulogy,
-                graveside service, or private reception may not be.
+                The funeral home’s arrangements, paperwork, and conversations
+                may be covered. A church service, eulogy, graveside service,
+                or private reception may not be.
               </p>
             </div>
 
@@ -465,9 +467,9 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                The venue may be responsible for access to its own
-                services, such as the front desk and event staff. That
-                does not necessarily cover the vows, toasts, or speeches.
+                The venue may be responsible for access to its own services,
+                such as the front desk and event staff. That does not
+                necessarily cover the vows, toasts, or speeches.
               </p>
             </div>
 
@@ -477,9 +479,9 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                A program operated by a city, public library, or college
-                may be covered. An informal group organized by neighbors
-                may not be.
+                A program operated by a city, public library, or college may
+                be covered. An informal group organized by neighbors may not
+                be.
               </p>
             </div>
 
@@ -489,27 +491,28 @@ function CoverageGuide() {
               </h4>
 
               <p className="mt-1">
-                State and local requirements can go beyond federal law.
-                Check with your state’s Deaf and hard-of-hearing
-                commission before assuming an event is not covered.
+                State and local requirements can go beyond federal law. Check
+                with your state’s Deaf and hard-of-hearing commission before
+                assuming an event is not covered.
               </p>
             </div>
           </div>
         </div>
 
-       <div className="mx-auto mt-12 max-w-4xl border-t border-[#E5E7EB] pt-8 text-center">
-          <p className="leading-relaxed text-[#374151]">
-            Even where the law is on your side, requesting and receiving
-            access can be two different things. If a covered organization
-            refuses, that is worth pursuing. If nobody was required to
-            provide access, that is worth a request here.
+        {/* CLOSING LINE + LEGAL NOTE */}
+        <div className="mx-auto mt-12 max-w-4xl border-t border-[#E5E7EB] pt-8 text-center">
+          <p className="text-lg leading-relaxed text-[#374151]">
+            Even where the law is on your side, asking and receiving are two
+            different things, and Deaf people know that better than anyone. If
+            a covered place refuses you, that’s worth pursuing. If nobody was
+            ever required in the first place, that’s worth a request here.
           </p>
 
-          <p className="mt-5 text-sm italic leading-relaxed text-[#6B7280]">
-            This is a plain-language summary, not legal advice. If you have
-            been denied an interpreter by an organization that may be
-            required to provide one, contact the National Association of
-            the Deaf or your state’s Deaf and hard-of-hearing commission.
+          <p className="mx-auto mt-5 max-w-3xl text-sm italic leading-relaxed text-[#6B7280]">
+            This is a plain-language summary, not legal advice. If you’ve been
+            denied an interpreter somewhere that’s required to provide one,
+            the National Association of the Deaf and your state’s Deaf and
+            hard of hearing commission can help.
           </p>
         </div>
       </div>
