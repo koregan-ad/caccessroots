@@ -21,47 +21,45 @@ export default async function MyAssignmentsPage() {
   }
 
   const { data: rows, error } = await supabase
-  .from("assignments")
-  .select(
-    "id,status,created_at,accepted_at,declined_at,decline_reason,request_id"
-  )
-  .eq("interpreter_id", user.id)
-  .order("created_at", { ascending: false });
-
-if (error) {
-  console.error("Interpreter assignments load error:", error);
-  throw new Error(`Could not load assignments: ${error.message}`);
-}
-
-const requestIds = rows?.map((row) => row.request_id) ?? [];
-
-const { data: requests, error: requestsError } = await supabase
-  .from("requests")
-  .select(
-    "id,title,event_address,event_start,event_end,event_type,description"
-  )
-  .in("id", requestIds);
-
-if (requestsError) {
-  console.error("Requests load error:", requestsError);
-  throw new Error(`Could not load requests: ${requestsError.message}`);
-}
-
-const rowsWithRequests =
-  {rowsWithRequests.map((row: any) => {
-    ...row,
-    requests: requests?.find(
-      (request) => request.id === row.request_id
-    ),
-  })) ?? [];
+    .from("assignments")
+    .select(
+      "id,status,created_at,accepted_at,declined_at,decline_reason,request_id"
+    )
+    .eq("interpreter_id", user.id)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Interpreter assignments load error:", error);
-
-    throw new Error(
-      `Could not load assignments: ${error.message}`
-    );
+    throw new Error(`Could not load assignments: ${error.message}`);
   }
+
+  const requestIds = rows?.map((row) => row.request_id) ?? [];
+
+  let requests: any[] = [];
+
+  if (requestIds.length > 0) {
+    const { data: requestRows, error: requestsError } = await supabase
+      .from("requests")
+      .select(
+        "id,title,event_address,event_start,event_end,event_type,description"
+      )
+      .in("id", requestIds);
+
+    if (requestsError) {
+      console.error("Requests load error:", requestsError);
+      throw new Error(`Could not load requests: ${requestsError.message}`);
+    }
+
+    requests = requestRows ?? [];
+  }
+
+  const rowsWithRequests =
+    rows?.map((row) => ({
+      ...row,
+      requests: requests.find(
+        (request) => request.id === row.request_id
+      ),
+    })) ?? [];
 
   return (
     <div>
@@ -72,7 +70,7 @@ const rowsWithRequests =
       </p>
 
       <div className="space-y-4 mt-6">
-        {rows?.map((row: any) => {
+        {rowsWithRequests.map((row: any) => {
           const wasWithdrawn =
             row.status === "declined" && Boolean(row.accepted_at);
 
@@ -214,7 +212,7 @@ const rowsWithRequests =
           );
         })}
 
-        {(!rows || rows.length === 0) && (
+        {rowsWithRequests.length === 0 && (
           <p className="text-ink-muted">
             No assignments yet.
           </p>
