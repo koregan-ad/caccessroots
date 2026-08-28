@@ -31,14 +31,26 @@ export async function acceptAssignmentAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (assignment?.request_id) {
-    const { error: requestError } = await supabase
+    const { data: updatedRequest, error: requestError } = await supabase
       .from("requests")
       .update({ status: "assigned" })
-      .eq("id", assignment.request_id);
+      .eq("id", assignment.request_id)
+      .select("id,status")
+      .maybeSingle();
 
-    if (requestError) throw new Error(requestError.message);
+    if (requestError) {
+      throw new Error(requestError.message);
+    }
 
-    revalidatePath(`/coordinator/requests/${assignment.request_id}`);
+    if (!updatedRequest) {
+      throw new Error(
+        "Assignment was accepted, but the request status could not be updated."
+      );
+    }
+
+    revalidatePath(
+      `/coordinator/requests/${assignment.request_id}`
+    );
   }
 
   revalidatePath("/interpreter/assignments");
@@ -79,14 +91,26 @@ export async function declineAssignmentAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (assignment?.request_id) {
-    const { error: requestError } = await supabase
+    const { data: updatedRequest, error: requestError } = await supabase
       .from("requests")
       .update({ status: "open" })
-      .eq("id", assignment.request_id);
+      .eq("id", assignment.request_id)
+      .select("id,status")
+      .maybeSingle();
 
-    if (requestError) throw new Error(requestError.message);
+    if (requestError) {
+      throw new Error(requestError.message);
+    }
 
-    revalidatePath(`/coordinator/requests/${assignment.request_id}`);
+    if (!updatedRequest) {
+      throw new Error(
+        "Assignment was declined, but the request could not be returned to open."
+      );
+    }
+
+    revalidatePath(
+      `/coordinator/requests/${assignment.request_id}`
+    );
   }
 
   revalidatePath("/interpreter/assignments");
@@ -111,14 +135,6 @@ export async function withdrawAssignmentAction(formData: FormData) {
   const decline_reason =
     String(formData.get("decline_reason") ?? "").trim() || null;
 
-  /*
-   * This action is specifically for an interpreter who already
-   * accepted an assignment but can no longer cover it.
-   *
-   * We use the existing "declined" status so this works with
-   * the current database status values without requiring a
-   * Supabase schema change.
-   */
   const { data: assignment, error } = await supabase
     .from("assignments")
     .update({
@@ -134,20 +150,29 @@ export async function withdrawAssignmentAction(formData: FormData) {
 
   if (error) throw new Error(error.message);
 
-  /*
-   * The request itself is NOT cancelled.
-   * It goes back to the coordinator queue so another
-   * interpreter can be assigned.
-   */
   if (assignment?.request_id) {
-    const { error: requestError } = await supabase
+    const { data: updatedRequest, error: requestError } = await supabase
       .from("requests")
-      .update({ status: "open" })
-      .eq("id", assignment.request_id);
+      .update({
+        status: "open",
+      })
+      .eq("id", assignment.request_id)
+      .select("id,status")
+      .maybeSingle();
 
-    if (requestError) throw new Error(requestError.message);
+    if (requestError) {
+      throw new Error(requestError.message);
+    }
 
-    revalidatePath(`/coordinator/requests/${assignment.request_id}`);
+    if (!updatedRequest) {
+      throw new Error(
+        "Assignment was withdrawn, but the request could not be returned to open."
+      );
+    }
+
+    revalidatePath(
+      `/coordinator/requests/${assignment.request_id}`
+    );
   }
 
   revalidatePath("/interpreter/assignments");
