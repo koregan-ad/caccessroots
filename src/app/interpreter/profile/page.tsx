@@ -98,7 +98,177 @@ export default async function InterpreterProfilePage() {
             placeholder="RID NIC, BEI, EIPA, etc."
           />
         </div>
+        <fieldset className="rounded-xl border border-slate-200 p-4 space-y-4">
+          <legend className="px-2 text-sm font-medium">
+            Qualifications and experience
+          </legend>
 
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label" htmlFor="is_certified">
+                Are you currently certified?
+              </label>
+
+              <select
+                id="is_certified"
+                name="is_certified"
+                className="input"
+                defaultValue={
+                  row?.is_certified === true
+                    ? "yes"
+                    : row?.is_certified === false
+                      ? "no"
+                      : ""
+                }
+              >
+                <option value="">Select an answer</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="label" htmlFor="experience_band">
+                Interpreting experience
+              </label>
+
+              <select
+                id="experience_band"
+                name="experience_band"
+                className="input"
+                defaultValue={row?.experience_band ?? ""}
+              >
+                <option value="">Select an experience level</option>
+                <option value="less_than_2">Less than 2 years</option>
+                <option value="2_to_5">2–5 years</option>
+                <option value="6_to_10">6–10 years</option>
+                <option value="11_plus">11+ years</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="label" htmlFor="certifications">
+              Certifications
+            </label>
+
+            <input
+              id="certifications"
+              name="certifications"
+              className="input"
+              defaultValue={(row?.certifications ?? []).join(", ")}
+              placeholder="RID NIC, CDI, BEI, EIPA"
+            />
+
+            <p className="text-xs text-ink-muted mt-1">
+              Separate multiple certifications with commas.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label" htmlFor="licenses">
+                Licenses
+              </label>
+
+              <input
+                id="licenses"
+                name="licenses"
+                className="input"
+                defaultValue={(row?.licenses ?? []).join(", ")}
+                placeholder="State license or permit"
+              />
+            </div>
+
+            <div>
+              <label className="label" htmlFor="specialties">
+                Specialties
+              </label>
+
+              <input
+                id="specialties"
+                name="specialties"
+                className="input"
+                defaultValue={(row?.specialties ?? []).join(", ")}
+                placeholder="DeafBlind, medical, legal"
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className="rounded-xl border border-slate-200 p-4 space-y-4">
+          <legend className="px-2 text-sm font-medium">
+            Profile media
+          </legend>
+
+          <div>
+            <label className="label" htmlFor="profile_photo_url">
+              Profile photo link
+            </label>
+
+            <input
+              id="profile_photo_url"
+              name="profile_photo_url"
+              type="url"
+              className="input"
+              defaultValue={row?.profile_photo_url ?? ""}
+              placeholder="https://example.com/photo.jpg"
+            />
+          </div>
+
+          <div>
+            <label className="label" htmlFor="intro_video_url">
+              Introduction video link
+            </label>
+
+            <input
+              id="intro_video_url"
+              name="intro_video_url"
+              type="url"
+              className="input"
+              defaultValue={row?.intro_video_url ?? ""}
+              placeholder="https://example.com/video"
+            />
+          </div>
+
+          <p className="text-xs text-ink-muted">
+            Only add links you are comfortable sharing with coordinators.
+          </p>
+        </fieldset>
+
+        <fieldset className="rounded-xl border border-slate-200 p-4 space-y-3">
+          <legend className="px-2 text-sm font-medium">
+            Mentorship and student support
+          </legend>
+
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="willing_to_mentor"
+              defaultChecked={row?.willing_to_mentor ?? false}
+              className="mt-1"
+            />
+
+            <span>
+              I am willing to mentor another interpreter.
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="willing_to_work_with_students"
+              defaultChecked={
+                row?.willing_to_work_with_students ?? false
+              }
+              className="mt-1"
+            />
+
+            <span>
+              I am willing to work with approved interpreting students.
+            </span>
+          </label>
+        </fieldset>
         <div>
           <label className="label" htmlFor="pro_bono_commitment">
             Your pro bono commitment statement
