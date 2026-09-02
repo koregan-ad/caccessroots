@@ -289,8 +289,14 @@ function VolunteerRecruitingSection() {
         id="volunteer-recruiting-heading"
         className="mt-3 font-serif text-4xl font-medium leading-tight text-[#F9FAFB] sm:text-5xl"
       >
-        The Code asks you to do this. It doesn’t tell you how to find it.
+        Thank you for your commitment to pro bono interpreting.
       </h1>
+    
+      <p className="mt-4 text-lg leading-relaxed text-[#E5E7EB]">
+        We all feel this sense of duty, as our Code asks us to do this.
+        Finally, there is now a centralized platform where you can offer
+        your services and be matched with local opportunities.
+      </p>
 
       <p className="mt-6 leading-relaxed text-[#E5E7EB]">
         The NAD-RID Code of Professional Conduct, Tenet 6.0, illustrative
