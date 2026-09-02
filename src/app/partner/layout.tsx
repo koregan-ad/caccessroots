@@ -6,6 +6,6 @@ export default async function PartnerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const profile = await requireRole(["partner_admin", "admin"]);
+    const profile = await requireRole(["admin"]);
   return <AppShell profile={profile}>{children}</AppShell>;
 }

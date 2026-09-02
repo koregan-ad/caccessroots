@@ -5,8 +5,7 @@ export type UserRole =
   | "requestor"
   | "interpreter"
   | "coordinator"
-  | "admin"
-  | "partner_admin";
+  | "admin";
 
 export type UserStatus = "pending" | "active" | "suspended" | "archived";
 

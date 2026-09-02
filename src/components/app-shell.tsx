@@ -30,12 +30,6 @@ const NAV: Record<UserRole, { href: string; label: string }[]> = {
     { href: "/admin/communities", label: "Communities" },
     { href: "/admin/audit-log", label: "Audit log" },
   ],
-
-  partner_admin: [
-    { href: "/partner", label: "Home" },
-    { href: "/partner/members", label: "Members" },
-    { href: "/partner/activity", label: "Activity" },
-  ],
 };
 
 const HEADER_TONE: Record<UserRole, string> = {
@@ -43,7 +37,6 @@ const HEADER_TONE: Record<UserRole, string> = {
   interpreter: "bg-white border-b border-[#E5E7EB]",
   coordinator: "bg-white border-b border-[#E5E7EB]",
   admin: "bg-white border-b border-[#E5E7EB]",
-  partner_admin: "bg-white border-b border-[#E5E7EB]",
 };
 
 export default function AppShell({

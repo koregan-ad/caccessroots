@@ -22,9 +22,6 @@ export default async function DashboardRouter() {
     case "interpreter":
       redirect("/interpreter");
 
-    case "partner_admin":
-      redirect("/partner");
-
     case "requestor":
     default:
       redirect("/requestor");
