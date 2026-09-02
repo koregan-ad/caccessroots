@@ -101,22 +101,32 @@ async function applyApprovalSideEffect(
       }
       break;
     case "sensitive_assignment":
-      // context: { request_id, interpreter_id }
+      // Admin clears the sensitive match for the requester to review. The
+      // interpreter still cannot see it until the requester accepts.
       if (approval.context?.request_id && approval.context?.interpreter_id) {
         await supabase
           .from("assignments")
           .update({
-            status: "released",
+            status: "proposed",
             released_by: approverId,
-            released_at: new Date().toISOString(),
+            released_at: null,
           })
           .eq("request_id", approval.context.request_id)
           .eq("interpreter_id", approval.context.interpreter_id)
           .eq("status", "pending_admin_release");
         await supabase
           .from("requests")
-          .update({ status: "pending_acceptance" })
+          .update({ status: "proposed" })
           .eq("id", approval.context.request_id);
+      }
+      break;
+    case "request_review":
+      if (approval.target_table === "requests") {
+        await supabase
+          .from("requests")
+          .update({ status: "open" })
+          .eq("id", approval.target_id)
+          .eq("status", "pending_review");
       }
       break;
     case "blocklist_edit":
@@ -136,5 +146,11 @@ async function applyRejectionSideEffect(
       .eq("request_id", approval.context.request_id)
       .eq("status", "pending_admin_release");
     await supabase.from("requests").update({ status: "open" }).eq("id", approval.context.request_id);
+  } else if (approval.kind === "request_review") {
+    await supabase
+      .from("requests")
+      .update({ status: "cancelled" })
+      .eq("id", approval.target_id)
+      .eq("status", "pending_review");
   }
 }

@@ -66,7 +66,8 @@ export default async function MyAssignmentsPage() {
       <h1 className="text-2xl font-semibold">My assignments</h1>
 
       <p className="text-ink-muted mt-1">
-        Released assignments are waiting for your accept or decline.
+        You’ll see a request here only after its requester approves the proposed
+        match. You can then accept or decline it.
       </p>
 
       <div className="space-y-4 mt-6">

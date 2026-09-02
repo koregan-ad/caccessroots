@@ -31,10 +31,10 @@ export default function LandingPage() {
             </Link>
 
             <Link
-              href="/sign-up"
+              href="/request"
               className="rounded-lg bg-[#DB1F26] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#B8171D] focus:outline-none focus:ring-2 focus:ring-[#DB1F26] focus:ring-offset-2 sm:px-5 sm:text-base"
             >
-              Get started
+              Request help
             </Link>
           </nav>
         </div>
@@ -64,7 +64,7 @@ export default function LandingPage() {
               </p>
 
               <p>
-                CAccessRoots connects Deaf people with qualified interpreters
+                CAccessRoots connects Deaf people with volunteer interpreters
                 who volunteer their time for these moments. No agency. No
                 invoice. No contract. Just people showing up for each other,
                 the way this work started.
@@ -74,7 +74,7 @@ export default function LandingPage() {
             <div className="mt-8">
               <div className="flex flex-nowrap gap-3 sm:gap-4">
                 <Link
-                  href="/sign-up"
+                  href="/request"
                   className="inline-flex min-h-12 min-w-0 flex-1 items-center justify-center rounded-lg bg-[#DB1F26] px-3 py-3 text-center text-sm font-medium leading-tight text-white transition hover:bg-[#B8171D] focus:outline-none focus:ring-2 focus:ring-[#DB1F26] focus:ring-offset-2 sm:px-6 sm:text-base"
                 >
                   Request an interpreter

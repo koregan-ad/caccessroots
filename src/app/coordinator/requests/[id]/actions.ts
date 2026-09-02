@@ -20,6 +20,25 @@ export async function proposeAssignmentAction(formData: FormData) {
     throw new Error("Missing request or interpreter");
   }
 
+  const { data: req, error: requestLookupError } = await supabase
+    .from("requests")
+    .select("sensitivity,status")
+    .eq("id", request_id)
+    .single();
+
+  if (requestLookupError) {
+    throw new Error(requestLookupError.message);
+  }
+
+  if (req.status !== "open") {
+    throw new Error("This request is not open for matching");
+  }
+
+  const initialAssignmentStatus =
+    req.sensitivity === "sensitive"
+      ? "pending_admin_release"
+      : "proposed";
+
   /*
    * Check whether this interpreter already has an assignment
    * record for this request.
@@ -52,7 +71,7 @@ export async function proposeAssignmentAction(formData: FormData) {
     const { data: updatedAssignment, error: updateError } = await supabase
       .from("assignments")
       .update({
-        status: "proposed",
+        status: initialAssignmentStatus,
         proposed_by: user.id,
 
         released_by: null,
@@ -83,7 +102,7 @@ export async function proposeAssignmentAction(formData: FormData) {
         request_id,
         interpreter_id,
         proposed_by: user.id,
-        status: "proposed",
+        status: initialAssignmentStatus,
       })
       .select("id")
       .single();
@@ -93,16 +112,6 @@ export async function proposeAssignmentAction(formData: FormData) {
     }
 
     assignmentId = newAssignment.id;
-  }
-
-  const { data: req, error: requestLookupError } = await supabase
-    .from("requests")
-    .select("sensitivity")
-    .eq("id", request_id)
-    .single();
-
-  if (requestLookupError) {
-    throw new Error(requestLookupError.message);
   }
 
   if (req?.sensitivity === "sensitive") {
@@ -130,7 +139,7 @@ export async function proposeAssignmentAction(formData: FormData) {
 
     const { error: requestError } = await supabase
       .from("requests")
-      .update({ status: "proposed" })
+      .update({ status: "pending_review" })
       .eq("id", request_id);
 
     if (requestError) {
@@ -139,25 +148,12 @@ export async function proposeAssignmentAction(formData: FormData) {
   } else {
     /*
      * Standard request:
-     * release immediately to the interpreter.
+     * hold the proposal for the requester to approve. The interpreter cannot
+     * see either the assignment or request yet.
      */
-    const { error: releaseError } = await supabase
-      .from("assignments")
-      .update({
-        status: "released",
-        released_by: user.id,
-        released_at: new Date().toISOString(),
-      })
-      .eq("id", assignmentId)
-      .eq("status", "proposed");
-
-    if (releaseError) {
-      throw new Error(releaseError.message);
-    }
-
     const { error: requestError } = await supabase
       .from("requests")
-      .update({ status: "pending_acceptance" })
+      .update({ status: "proposed" })
       .eq("id", request_id);
 
     if (requestError) {

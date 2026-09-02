@@ -1,26 +1,60 @@
 import { createRequestAction } from "./actions";
-
-const EVENT_TYPES = [
-  { value: "medical", label: "Medical appointment" },
-  { value: "funeral", label: "Funeral / memorial" },
-  { value: "wedding", label: "Wedding" },
-  { value: "family_event", label: "Family event" },
-  { value: "school", label: "School / parent–teacher" },
-  { value: "legal", label: "Legal / civic" },
-  { value: "religious", label: "Religious service" },
-  { value: "other", label: "Other" },
-];
+import { COVERAGE_RESPONSES, EVENT_TYPES } from "@/lib/request-workflow";
 
 export default function NewRequestPage() {
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-semibold">New request</h1>
       <p className="text-ink-muted mt-1">
-        Tell us the basics: date, location, and type of event. Keep sensitive
-        details out of the form.
+        Tell us the basics. Requests marked for review are held until a person
+        confirms that they belong on CAccessRoots.
       </p>
 
       <form action={createRequestAction} className="card p-6 space-y-4 mt-6">
+        <div className="rounded-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] p-4 text-sm leading-relaxed text-[#374151]">
+          <p className="font-semibold text-[#0A0D12]">Platform disclaimer</p>
+          <p className="mt-1">
+            CAccessRoots provides the platform, not the interpreters. No
+            vetting, no quality control, no guarantee of coverage.
+          </p>
+          <label className="mt-3 flex items-start gap-2 font-medium">
+            <input
+              type="checkbox"
+              name="disclaimer_accepted"
+              value="yes"
+              required
+              className="mt-1"
+            />
+            <span>I understand and want to continue.</span>
+          </label>
+        </div>
+
+        <fieldset className="rounded-xl border border-slate-200 p-4">
+          <legend className="px-2 text-sm font-medium">
+            Is another organization responsible for providing access?
+          </legend>
+          <p className="mb-3 text-xs leading-relaxed text-ink-muted">
+            This may include a medical provider, school, employer, court,
+            government office, or business. Choosing “yes” or “not sure” sends
+            the request to a person for review before matching.
+          </p>
+          <div className="space-y-2 text-sm">
+            {COVERAGE_RESPONSES.map((response, index) => (
+              <label key={response.value} className="flex items-start gap-2">
+                <input
+                  type="radio"
+                  name="coverage_responsibility"
+                  value={response.value}
+                  required
+                  defaultChecked={index === 0}
+                  className="mt-1"
+                />
+                <span>{response.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
         <div>
           <label className="label" htmlFor="title">Title</label>
           <input id="title" name="title" required className="input" placeholder="e.g. Grandma's 80th birthday dinner" />
@@ -39,6 +73,10 @@ export default function NewRequestPage() {
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
+            <p className="mt-1 text-xs text-ink-muted">
+              Funeral, memorial, and Other requests are always reviewed before
+              matching.
+            </p>
           </div>
           <div>
             <label className="label" htmlFor="modality">Modality</label>
@@ -47,6 +85,18 @@ export default function NewRequestPage() {
               <option value="video">Video</option>
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className="label" htmlFor="other_event_type">
+            If you chose Other, briefly describe the type of event
+          </label>
+          <input
+            id="other_event_type"
+            name="other_event_type"
+            className="input"
+            placeholder="Event type only — do not include names or private details"
+          />
         </div>
 
         <div>
@@ -76,16 +126,39 @@ export default function NewRequestPage() {
           <div className="space-y-2 text-sm">
             <label className="flex items-start gap-2">
               <input type="radio" name="sensitivity" value="standard" defaultChecked className="mt-1" />
-              <span><span className="font-medium">Standard.</span> Open to interpreters within your area.</span>
+              <span>
+                <span className="font-medium">Standard.</span> A coordinator
+                can propose a nearby interpreter for you to approve.
+              </span>
             </label>
             <label className="flex items-start gap-2">
               <input type="radio" name="sensitivity" value="sensitive" className="mt-1" />
               <span>
                 <span className="font-medium">Sensitive.</span> Funeral, family
                 conflict, a first meeting, or another intimate context. A
-                coordinator will look at the request category before anyone is
-                matched. You do not need to explain why it is sensitive.
+                coordinator and admin will review the category before proposing
+                a match to you. You do not need to explain why it is sensitive.
               </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset className="rounded-xl border border-slate-200 p-4">
+          <legend className="px-2 text-sm font-medium">
+            Does this request involve anyone under 18?
+          </legend>
+          <p className="mb-3 text-xs text-ink-muted">
+            Requests involving minors are held for review and are never
+            automatically matched.
+          </p>
+          <div className="flex flex-wrap gap-5 text-sm">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="involves_minor" value="no" defaultChecked required />
+              <span>No</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" name="involves_minor" value="yes" required />
+              <span>Yes</span>
             </label>
           </div>
         </fieldset>

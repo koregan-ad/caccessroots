@@ -17,7 +17,11 @@ export default function SignInPage() {
 function SignInForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") ?? "/dashboard";
+  const nextParam = params.get("next");
+  const next =
+    nextParam?.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -71,8 +75,8 @@ function SignInForm() {
 
         <p className="text-sm text-olive-700 mt-6 text-center">
           New here?{" "}
-          <Link href="/sign-up" className="text-brand-700 font-medium underline-offset-2 hover:underline">
-            Create an account
+          <Link href="/" className="text-brand-700 font-medium underline-offset-2 hover:underline">
+            Choose request or volunteer
           </Link>
         </p>
       </div>

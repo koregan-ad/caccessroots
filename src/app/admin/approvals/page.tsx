@@ -5,6 +5,7 @@ import { decideApprovalAction } from "./actions";
 const KIND_LABEL: Record<string, string> = {
   interpreter_onboarding: "Interpreter onboarding",
   community_onboarding: "Community onboarding",
+  request_review: "Request eligibility review",
   sensitive_assignment: "Sensitive assignment",
   role_escalation: "Role escalation",
   reinstatement: "Reinstatement",
@@ -89,6 +90,8 @@ function summarize(a: any): string {
       return "New interpreter awaiting vetting";
     case "community_onboarding":
       return "Partner community awaiting activation";
+    case "request_review":
+      return `Review request eligibility: ${a.context?.title ?? "Untitled request"}`;
     case "sensitive_assignment":
       return "Sensitive assignment proposed by coordinator";
     case "role_escalation":

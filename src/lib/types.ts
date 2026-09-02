@@ -12,6 +12,7 @@ export type UserStatus = "pending" | "active" | "suspended" | "archived";
 
 export type RequestStatus =
   | "draft"
+  | "pending_review"
   | "open"
   | "proposed"
   | "pending_acceptance"
@@ -33,6 +34,7 @@ export type AssignmentStatus =
 export type ApprovalKind =
   | "interpreter_onboarding"
   | "community_onboarding"
+  | "request_review"
   | "sensitive_assignment"
   | "role_escalation"
   | "reinstatement"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatDateTime, relativeFromNow } from "@/lib/utils";
+import { eventTypeLabel, requestStatusLabel } from "@/lib/request-workflow";
 
 export default async function CoordinatorQueue() {
   const supabase = createSupabaseServerClient();
@@ -9,7 +10,7 @@ export default async function CoordinatorQueue() {
     .select(
       "id,title,event_type,event_address,event_start,event_end,status,sensitivity,languages_needed,modality,requestor:requestor_id(full_name)"
     )
-    .in("status", ["open", "proposed", "pending_acceptance"])
+    .in("status", ["pending_review", "open", "proposed", "pending_acceptance"])
     .order("event_start", { ascending: true });
 
   return (
@@ -18,8 +19,8 @@ export default async function CoordinatorQueue() {
         <div>
           <h1 className="text-2xl font-semibold">Request queue</h1>
           <p className="text-ink-muted mt-1">
-            Open requests in chronological order. Click one to see recommended
-            interpreters with the COI hard-filter already applied.
+            Requests in chronological order. Only Open requests can be matched;
+            the COI blocklist is applied before recommendations are shown.
           </p>
         </div>
         <Link href="/coordinator/map" className="btn-secondary">View map</Link>
@@ -46,7 +47,7 @@ export default async function CoordinatorQueue() {
                 </td>
                 <td className="px-4 py-3">{r.requestor?.full_name}</td>
                 <td className="px-4 py-3 capitalize">
-                  {r.event_type.replace("_", " ")}
+                  {eventTypeLabel(r.event_type)}
                   {r.sensitivity === "sensitive" && (
                     <span className="badge bg-terra-100 text-terra-900 ml-2">
                       Sensitive
@@ -59,12 +60,12 @@ export default async function CoordinatorQueue() {
                 </td>
                 <td className="px-4 py-3">
                   <span className="badge bg-brand-50 text-brand-700 capitalize">
-                    {r.status.replace("_", " ")}
+                    {requestStatusLabel(r.status)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <Link href={`/coordinator/requests/${r.id}`} className="btn-primary text-xs py-1 px-2">
-                    Match
+                    {r.status === "open" ? "Match" : "View"}
                   </Link>
                 </td>
               </tr>

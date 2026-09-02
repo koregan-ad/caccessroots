@@ -14,7 +14,6 @@ const NAV: Record<UserRole, { href: string; label: string }[]> = {
   interpreter: [
     { href: "/interpreter", label: "Home" },
     { href: "/interpreter/profile", label: "My profile" },
-    { href: "/interpreter/open-requests", label: "Open requests" },
     { href: "/interpreter/assignments", label: "My assignments" },
   ],
 

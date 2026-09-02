@@ -20,12 +20,7 @@ const ROLES: {
   {
     value: "interpreter",
     label: "I'm a volunteer interpreter",
-    desc: "Qualified interpreters offering pro bono service close to home.",
-  },
-  {
-    value: "partner_admin",
-    label: "I represent a Deaf community organization",
-    desc: "Partner organizations that vouch for community members.",
+    desc: "Interpreters offering pro bono service close to home.",
   },
 ];
 
@@ -40,11 +35,14 @@ export default function SignUpPage() {
 function SignUpForm() {
   const params = useSearchParams();
   const roleParam = params.get("role");
+  const nextParam = params.get("next");
 
   const initialRole: UserRole =
-    roleParam === "interpreter" || roleParam === "partner_admin"
+    roleParam === "interpreter" || roleParam === "requestor"
       ? roleParam
       : "requestor";
+  const hasLockedRole =
+    roleParam === "interpreter" || roleParam === "requestor";
 
   const [role, setRole] = useState<UserRole>(initialRole);
   const [fullName, setFullName] = useState("");
@@ -94,7 +92,10 @@ function SignUpForm() {
     setLoading(false);
 
     if (role === "requestor") {
-      window.location.href = "/requestor";
+      window.location.href =
+        nextParam?.startsWith("/") && !nextParam.startsWith("//")
+          ? nextParam
+          : "/requestor";
       return;
     }
 
@@ -119,7 +120,10 @@ function SignUpForm() {
             isInterpreter ? "mt-8 lg:mt-0" : ""
           }`}
         >
-          <Link href="/" className="text-sm text-[#DB1F26]">
+          <Link
+            href={role === "requestor" && hasLockedRole ? "/request" : "/"}
+            className="text-sm text-[#DB1F26]"
+          >
             ← Back
           </Link>
 
@@ -138,42 +142,55 @@ function SignUpForm() {
           )}
 
           <p className="mt-1 text-sm text-[#6B7280]">
-            Tell us which account you&apos;d like.
+            {hasLockedRole
+              ? "Create your account to continue."
+              : "Tell us which account you’d like."}
           </p>
 
-          <div className="mt-6 space-y-3">
-            {ROLES.map((r) => (
-              <label
-                key={r.value}
-                className={`block cursor-pointer rounded-xl border p-4 transition ${
-                  role === r.value
-                    ? "border-[#DB1F26] bg-[#FCEBEC]"
-                    : "border-[#E5E7EB] hover:border-[#DB1F26]"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <input
-                    type="radio"
-                    className="mt-1"
-                    name="role"
-                    value={r.value}
-                    checked={role === r.value}
-                    onChange={() => setRole(r.value)}
-                  />
+          {hasLockedRole ? (
+            <div className="mt-6 rounded-xl border border-[#DB1F26] bg-[#FCEBEC] p-4">
+              <p className="font-medium text-[#0A0D12]">
+                {ROLES.find((option) => option.value === role)?.label}
+              </p>
+              <p className="mt-1 text-sm text-[#6B7280]">
+                {ROLES.find((option) => option.value === role)?.desc}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-3">
+              {ROLES.map((r) => (
+                <label
+                  key={r.value}
+                  className={`block cursor-pointer rounded-xl border p-4 transition ${
+                    role === r.value
+                      ? "border-[#DB1F26] bg-[#FCEBEC]"
+                      : "border-[#E5E7EB] hover:border-[#DB1F26]"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="radio"
+                      className="mt-1"
+                      name="role"
+                      value={r.value}
+                      checked={role === r.value}
+                      onChange={() => setRole(r.value)}
+                    />
 
-                  <div>
-                    <p className="font-medium text-[#0A0D12]">
-                      {r.label}
-                    </p>
+                    <div>
+                      <p className="font-medium text-[#0A0D12]">
+                        {r.label}
+                      </p>
 
-                    <p className="text-sm text-[#6B7280]">
-                      {r.desc}
-                    </p>
+                      <p className="text-sm text-[#6B7280]">
+                        {r.desc}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </label>
-            ))}
-          </div>
+                </label>
+              ))}
+            </div>
+          )}
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>

@@ -3,6 +3,10 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
+import {
+  ALLOWED_EVENT_TYPES,
+  REVIEW_EVENT_TYPES,
+} from "@/lib/request-workflow";
 
 export async function createRequestAction(formData: FormData) {
   const supabase = createSupabaseServerClient();
@@ -17,7 +21,16 @@ export async function createRequestAction(formData: FormData) {
   const description =
     String(formData.get("description") ?? "").trim() || null;
   const event_type = String(formData.get("event_type") ?? "other");
-  const sensitivity =
+  const other_event_type = String(
+    formData.get("other_event_type") ?? ""
+  ).trim();
+  const coverage_responsibility = String(
+    formData.get("coverage_responsibility") ?? ""
+  );
+  const involves_minor = formData.get("involves_minor") === "yes";
+  const disclaimerAccepted =
+    formData.get("disclaimer_accepted") === "yes";
+  let sensitivity =
     formData.get("sensitivity") === "sensitive"
       ? "sensitive"
       : "standard";
@@ -39,6 +52,63 @@ export async function createRequestAction(formData: FormData) {
 
   if (!title || !event_address || !event_start || !event_end) {
     throw new Error("Missing required fields");
+  }
+
+  if (!disclaimerAccepted) {
+    throw new Error("You must accept the platform disclaimer to continue");
+  }
+
+  if (!ALLOWED_EVENT_TYPES.has(event_type)) {
+    throw new Error("That event type is not eligible for this request form");
+  }
+
+  if (event_type === "other" && !other_event_type) {
+    throw new Error("Please briefly describe the Other event type");
+  }
+
+  if (
+    !["personal", "not_sure", "organization_responsible"].includes(
+      coverage_responsibility
+    )
+  ) {
+    throw new Error("Please answer the access responsibility question");
+  }
+
+  const startsAt = new Date(event_start);
+  const endsAt = new Date(event_end);
+
+  if (
+    Number.isNaN(startsAt.getTime()) ||
+    Number.isNaN(endsAt.getTime()) ||
+    endsAt <= startsAt
+  ) {
+    throw new Error("The event end time must be after the start time");
+  }
+
+  const reviewReasons: string[] = [];
+
+  if (REVIEW_EVENT_TYPES.has(event_type)) {
+    reviewReasons.push(
+      event_type === "other"
+        ? `Other event type: ${other_event_type}`
+        : "Funeral or memorial request"
+    );
+  }
+
+  if (coverage_responsibility === "not_sure") {
+    reviewReasons.push("Requester is unsure who is responsible for access");
+  } else if (coverage_responsibility === "organization_responsible") {
+    reviewReasons.push("An organization may be responsible for access");
+  }
+
+  if (involves_minor) {
+    reviewReasons.push("Request involves a minor");
+  }
+
+  const needsReview = reviewReasons.length > 0;
+
+  if (event_type === "funeral_memorial" || involves_minor) {
+    sensitivity = "sensitive";
   }
 
   let geo;
@@ -82,7 +152,8 @@ export async function createRequestAction(formData: FormData) {
       event_end,
       languages_needed,
       modality,
-      status: "open",
+      status: needsReview ? "pending_review" : "open",
+      notes_internal: needsReview ? reviewReasons.join("; ") : null,
     })
     .select("id")
     .single();

@@ -8,12 +8,12 @@ export default async function AdminHome() {
     await Promise.all([
       supabase.from("approvals").select("id", { count: "exact", head: true }).eq("final_decision", "pending"),
       supabase.from("profiles").select("id", { count: "exact", head: true }).eq("status", "pending"),
-      supabase.from("requests").select("id", { count: "exact", head: true }).in("status", ["open", "proposed"]),
+      supabase.from("requests").select("id", { count: "exact", head: true }).in("status", ["pending_review", "open", "proposed"]),
       supabase
         .from("requests")
         .select("id", { count: "exact", head: true })
         .eq("sensitivity", "sensitive")
-        .in("status", ["open", "proposed", "pending_acceptance"]),
+        .in("status", ["pending_review", "open", "proposed", "pending_acceptance"]),
     ]);
 
   return (
@@ -28,7 +28,7 @@ export default async function AdminHome() {
       <div className="grid sm:grid-cols-4 gap-4">
         <Stat label="Pending approvals" value={pendingApprovals ?? 0} href="/admin/approvals" tone="amber" />
         <Stat label="Users awaiting review" value={pendingUsers ?? 0} href="/admin/users?status=pending" />
-        <Stat label="Open requests" value={openRequests ?? 0} href="/coordinator" />
+        <Stat label="Requests in queue" value={openRequests ?? 0} href="/coordinator" />
         <Stat label="Sensitive in flight" value={sensitiveOpen ?? 0} href="/coordinator" tone="amber" />
       </div>
 

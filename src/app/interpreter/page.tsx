@@ -119,15 +119,6 @@ export default async function InterpreterHome() {
         <ul className="mt-4 space-y-3 text-sm">
           <li>
             <Link
-              href="/interpreter/open-requests"
-              className="text-brand-600 font-medium"
-            >
-              Browse open requests near me →
-            </Link>
-          </li>
-
-          <li>
-            <Link
               href="/interpreter/assignments"
               className="text-brand-600 font-medium"
             >

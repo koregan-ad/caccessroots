@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatDateTime, relativeFromNow } from "@/lib/utils";
 import type { InterpreterRecommendation } from "@/lib/types";
+import { eventTypeLabel, requestStatusLabel } from "@/lib/request-workflow";
 import { proposeAssignmentAction } from "./actions";
 
 export default async function MatchRequestPage({
@@ -15,7 +16,7 @@ export default async function MatchRequestPage({
  const { data: request, error } = await supabase
   .from("requests")
   .select(
-    "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id"
+    "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
   )
   .eq("id", params.id)
   .maybeSingle();
@@ -39,15 +40,21 @@ if (requestorError) {
   console.error("Coordinator requestor load error:", requestorError);
 }
 
-  const { data: recs, error: recError } = await supabase.rpc(
-    "match_interpreters_for_request",
-    {
-      p_request_id: params.id,
-    }
-  );
+  let recs: InterpreterRecommendation[] = [];
 
-  if (recError) {
-    throw new Error(recError.message);
+  if (request.status === "open") {
+    const { data, error: recError } = await supabase.rpc(
+      "match_interpreters_for_request",
+      {
+        p_request_id: params.id,
+      }
+    );
+
+    if (recError) {
+      throw new Error(recError.message);
+    }
+
+    recs = (data ?? []) as InterpreterRecommendation[];
   }
 
   /*
@@ -67,7 +74,7 @@ if (requestorError) {
     throw new Error(assignmentError.message);
   }
 
-  const recommendations = (recs ?? []) as InterpreterRecommendation[];
+  const recommendations = recs;
 
   /*
    * Keep the newest assignment record for each interpreter.
@@ -99,7 +106,7 @@ if (requestorError) {
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs uppercase tracking-wide text-ink-subtle">
-              {(request as any).event_type.replace("_", " ")}
+              {eventTypeLabel((request as any).event_type)}
             </p>
 
             <h1 className="text-2xl font-semibold mt-1">
@@ -114,7 +121,7 @@ if (requestorError) {
 
           {request.sensitivity === "sensitive" && (
             <span className="badge bg-terra-100 text-terra-900">
-              Sensitive — admin must release the match
+              Sensitive — extra review required
             </span>
           )}
         </div>
@@ -157,21 +164,36 @@ if (requestorError) {
         )}
       </div>
 
+      {request.status === "pending_review" && (
+        <div className="mt-5 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-semibold">Held for admin review</p>
+          <p className="mt-1">
+            This request cannot move forward until an admin approves it.
+          </p>
+          {request.notes_internal && (
+            <p className="mt-2">Review reason: {request.notes_internal}</p>
+          )}
+        </div>
+      )}
+
       <h2 className="text-xl font-semibold mt-8">
-        Recommended interpreters{" "}
-        <span className="text-sm text-ink-muted font-normal">
-          ({recommendations.length} eligible after COI / language / radius
-          filters)
-        </span>
+        {canAssignNewInterpreter ? "Recommended interpreters" : "Match status"}{" "}
+        {canAssignNewInterpreter && (
+          <span className="text-sm text-ink-muted font-normal">
+            ({recommendations.length} eligible after COI / language / radius
+            filters)
+          </span>
+        )}
       </h2>
 
       <p className="text-sm text-ink-muted">
-        Ranked by fit. Blocklisted interpreters are excluded by the database —
-        they do not appear here.
+        {canAssignNewInterpreter
+          ? "Ranked by fit. Blocklisted interpreters are excluded by the database — they do not appear here."
+          : `This request is ${requestStatusLabel(request.status).toLowerCase()}. No new interpreter can be proposed right now.`}
       </p>
 
       <div className="space-y-3 mt-4">
-        {recommendations.map((r) => {
+        {canAssignNewInterpreter && recommendations.map((r) => {
           const existingAssignment = assignmentByInterpreter.get(
             r.interpreter_id
           );
@@ -288,8 +310,8 @@ if (requestorError) {
 
                       <button className="btn-primary text-sm py-1.5 px-3">
                         {request.sensitivity === "sensitive"
-                          ? "Propose to admin"
-                          : "Assign"}
+                          ? "Send for admin review"
+                          : "Propose to requester"}
                       </button>
                     </form>
                   )}
@@ -298,11 +320,23 @@ if (requestorError) {
           );
         })}
 
-        {recommendations.length === 0 && (
+        {canAssignNewInterpreter && recommendations.length === 0 && (
           <div className="card p-6 text-center text-ink-muted">
             No interpreters match this request's filters. Consider widening the
             service radius, contacting partner communities, or flagging this
             for admin attention.
+          </div>
+        )}
+
+        {!canAssignNewInterpreter && (
+          <div className="card p-6 text-center text-ink-muted">
+            {request.status === "proposed"
+              ? "The proposed match is waiting for the requester’s decision. The interpreter has not been contacted."
+              : request.status === "pending_acceptance"
+                ? "The requester accepted the match. The interpreter can now accept or decline it."
+                : request.status === "pending_review"
+                  ? "An admin must finish the review before matching can continue."
+                  : `Current status: ${requestStatusLabel(request.status)}.`}
           </div>
         )}
       </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { formatDateTime, relativeFromNow } from "@/lib/utils";
+import { requestStatusLabel } from "@/lib/request-workflow";
 
 export default async function RequestorHome() {
   const profile = await requireProfile();
@@ -11,7 +12,7 @@ export default async function RequestorHome() {
     .from("requests")
     .select("id,title,event_start,event_address,status,sensitivity")
     .eq("requestor_id", profile.id)
-    .in("status", ["draft", "open", "proposed", "pending_acceptance", "assigned"])
+    .in("status", ["draft", "pending_review", "open", "proposed", "pending_acceptance", "assigned"])
     .order("event_start", { ascending: true })
     .limit(5);
 
@@ -60,7 +61,7 @@ export default async function RequestorHome() {
                     </span>
                   )}
                   <span className="badge bg-brand-50 text-brand-700 capitalize">
-                    {r.status.replace("_", " ")}
+                    {requestStatusLabel(r.status)}
                   </span>
                 </div>
               </li>
