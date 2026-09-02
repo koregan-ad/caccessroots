@@ -31,30 +31,13 @@ export async function acceptAssignmentAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (assignment?.request_id) {
-    const { data: updatedRequest, error: requestError } = await supabase
-      .from("requests")
-      .update({ status: "assigned" })
-      .eq("id", assignment.request_id)
-      .select("id,status")
-      .maybeSingle();
-
-    if (requestError) {
-      throw new Error(requestError.message);
-    }
-
-    if (!updatedRequest) {
-      throw new Error(
-        "Assignment was accepted, but the request status could not be updated."
-      );
-    }
-
+    // The database trigger updates the request to Assigned.
     revalidatePath(
       `/coordinator/requests/${assignment.request_id}`
     );
   }
 
   revalidatePath("/interpreter/assignments");
-  revalidatePath("/interpreter/open-requests");
   revalidatePath("/requestor/requests");
   revalidatePath("/coordinator");
 }
@@ -91,30 +74,13 @@ export async function declineAssignmentAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (assignment?.request_id) {
-    const { data: updatedRequest, error: requestError } = await supabase
-      .from("requests")
-      .update({ status: "open" })
-      .eq("id", assignment.request_id)
-      .select("id,status")
-      .maybeSingle();
-
-    if (requestError) {
-      throw new Error(requestError.message);
-    }
-
-    if (!updatedRequest) {
-      throw new Error(
-        "Assignment was declined, but the request could not be returned to open."
-      );
-    }
-
+    // The database trigger returns the request to Open.
     revalidatePath(
       `/coordinator/requests/${assignment.request_id}`
     );
   }
 
   revalidatePath("/interpreter/assignments");
-  revalidatePath("/interpreter/open-requests");
   revalidatePath("/requestor/requests");
   revalidatePath("/coordinator");
 }
@@ -151,32 +117,13 @@ export async function withdrawAssignmentAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   if (assignment?.request_id) {
-    const { data: updatedRequest, error: requestError } = await supabase
-      .from("requests")
-      .update({
-        status: "open",
-      })
-      .eq("id", assignment.request_id)
-      .select("id,status")
-      .maybeSingle();
-
-    if (requestError) {
-      throw new Error(requestError.message);
-    }
-
-    if (!updatedRequest) {
-      throw new Error(
-        "Assignment was withdrawn, but the request could not be returned to open."
-      );
-    }
-
+    // The database trigger returns the request to Open.
     revalidatePath(
       `/coordinator/requests/${assignment.request_id}`
     );
   }
 
   revalidatePath("/interpreter/assignments");
-  revalidatePath("/interpreter/open-requests");
   revalidatePath("/requestor/requests");
   revalidatePath("/coordinator");
 }
