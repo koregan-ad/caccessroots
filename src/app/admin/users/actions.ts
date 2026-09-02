@@ -37,7 +37,7 @@ export async function requestRoleEscalationAction(formData: FormData) {
   const profile_id = String(formData.get("profile_id"));
   const new_role = String(formData.get("new_role"));
 
-  if (!["coordinator", "admin", "partner_admin"].includes(new_role)) {
+  if (!["coordinator", "admin"].includes(new_role)) {
     throw new Error("Invalid role");
   }
 
