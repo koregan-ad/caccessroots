@@ -14,8 +14,13 @@ export default function NewRequestPage() {
         <div className="rounded-xl border-l-4 border-[#DB1F26] bg-[#FCEBEC] p-4 text-sm leading-relaxed text-[#374151]">
           <p className="font-semibold text-[#0A0D12]">Platform disclaimer</p>
           <p className="mt-1">
-            CAccessRoots provides the platform, not the interpreters. No
-            vetting, no quality control, no guarantee of coverage.
+            CAccessRoots provides the platform, interpreters provide their details, and
+            the system facilitates matching. Profile details are self-disclosed;
+            CAccessRoots does not conduct an in-depth vetting process and cannot
+            guarantee coverage. Coverage depends on whether local interpreters volunteer
+            to provide pro bono services. If no one offers, our volunteers will send a
+            call out to all publicly registered RID members—Associate and Certified—in
+            your local area.
           </p>
           <label className="mt-3 flex items-start gap-2 font-medium">
             <input
