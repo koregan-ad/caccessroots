@@ -93,7 +93,6 @@ export default async function AdminUsersPage({
                       <select name="new_role" className="input text-xs py-1">
                         <option value="coordinator">→ Coordinator</option>
                         <option value="admin">→ Admin</option>
-                        <option value="partner_admin">→ Partner admin</option>
                       </select>
                       <button className="btn-secondary text-xs py-1 px-2">
                         Propose
