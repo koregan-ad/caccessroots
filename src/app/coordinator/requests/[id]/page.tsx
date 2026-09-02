@@ -295,7 +295,8 @@ if (requestorError) {
 
                {canAssignNewInterpreter &&
                 (!existingAssignment ||
-                  existingAssignment.status === "declined") && (
+                existingAssignment.status === "declined") && (
+                <form action={proposeAssignmentAction}>
                       <input
                         type="hidden"
                         name="request_id"
