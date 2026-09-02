@@ -28,8 +28,13 @@ export default function RequestInterpreterPage() {
               Before you continue
             </h2>
             <p className="mt-2 leading-relaxed text-[#374151]">
-              CAccessRoots provides the platform, not the interpreters. No
-              vetting, no quality control, no guarantee of coverage.
+             CAccessRoots provides the platform, interpreters provide their details, and
+             the system facilitates matching. Profile details are self-disclosed;
+             CAccessRoots does not conduct an in-depth vetting process and cannot
+             guarantee coverage. Coverage depends on whether local interpreters volunteer
+             to provide pro bono services. If no one offers, our volunteers will send a
+             call out to all publicly registered RID members—Associate and Certified—in
+             your local area.
             </p>
           </div>
 
