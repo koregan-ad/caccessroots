@@ -293,9 +293,9 @@ if (requestorError) {
                     </span>
                   )}
 
-                {!existingAssignment &&
-                  canAssignNewInterpreter && (
-                    <form action={proposeAssignmentAction}>
+               {canAssignNewInterpreter &&
+                (!existingAssignment ||
+                  existingAssignment.status === "declined") && (
                       <input
                         type="hidden"
                         name="request_id"
@@ -309,9 +309,11 @@ if (requestorError) {
                       />
 
                       <button className="btn-primary text-sm py-1.5 px-3">
-                        {request.sensitivity === "sensitive"
-                          ? "Send for admin review"
-                          : "Propose to requester"}
+                        {existingAssignment?.status === "declined"
+                        ? "Reassign"
+                        : request.sensitivity === "sensitive"
+                        ? "Send for admin review"
+                        : "Propose to requester"}
                       </button>
                     </form>
                   )}
