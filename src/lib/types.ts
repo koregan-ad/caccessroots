@@ -72,6 +72,15 @@ export interface InterpreterProfile {
   languages: string[];
   modalities: string[];
   credentials: string | null;
+  is_certified: boolean | null;
+  certifications: string[];
+  licenses: string[];
+  specialties: string[];
+  experience_band: string | null;
+  profile_photo_url: string | null;
+  intro_video_url: string | null;
+  willing_to_mentor: boolean;
+  willing_to_work_with_students: boolean;
   pro_bono_commitment: string | null;
   pro_bono_signed_at: string | null;
   notes: string | null;
