@@ -28,7 +28,7 @@ export default async function MatchRequestPage({
     await supabase
       .from("requests")
       .select(
-        "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
+        "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,student_interpreter_allowed,status,requestor_id,notes_internal"
       )
       .eq("id", params.id)
       .maybeSingle();
@@ -109,7 +109,7 @@ export default async function MatchRequestPage({
     ? await supabase
         .from("interpreter_profiles")
         .select(
-          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,accepting_requests,available_days,preferred_time_blocks,unavailable_until"
+          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,is_advanced_itp_student,college_name,accepting_requests,available_days,preferred_time_blocks,unavailable_until"
         )
         .in(
           "profile_id",
