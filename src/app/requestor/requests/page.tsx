@@ -1,5 +1,8 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
+import {
+  createInterpreterPhotoUrl,
+  createInterpreterVideoUrl,
+} from "@/lib/interpreter-photos";
 import { requireProfile } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -20,12 +23,15 @@ type ProposalRow = {
   interpreter_experience_band: string | null;
   interpreter_profile_photo_path: string | null;
   interpreter_intro_video_url: string | null;
+  interpreter_intro_video_path: string | null;
   interpreter_photo_url?: string | null;
+  interpreter_video_url?: string | null;
 };
 
 export default async function MyRequestsPage() {
   const profile = await requireProfile();
-  const supabase = createSupabaseServerClient();
+  const supabase =
+    createSupabaseServerClient();
 
   const { data: requests } = await supabase
     .from("requests")
@@ -33,12 +39,16 @@ export default async function MyRequestsPage() {
       "id,title,event_start,event_address,status,sensitivity,event_type"
     )
     .eq("requestor_id", profile.id)
-    .order("event_start", { ascending: false });
+    .order("event_start", {
+      ascending: false,
+    });
 
-  const { data: proposalRows, error: proposalError } =
-    await supabase.rpc(
-      "requestor_assignment_proposals"
-    );
+  const {
+    data: proposalRows,
+    error: proposalError,
+  } = await supabase.rpc(
+    "requestor_assignment_proposals"
+  );
 
   if (proposalError) {
     console.error(
@@ -55,10 +65,17 @@ export default async function MyRequestsPage() {
     ((proposalRows ?? []) as ProposalRow[]).map(
       async (proposal) => ({
         ...proposal,
+
         interpreter_photo_url:
           await createInterpreterPhotoUrl(
             supabase,
             proposal.interpreter_profile_photo_path
+          ),
+
+        interpreter_video_url:
+          await createInterpreterVideoUrl(
+            supabase,
+            proposal.interpreter_intro_video_path
           ),
       })
     )
@@ -85,11 +102,21 @@ export default async function MyRequestsPage() {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-ink-muted text-left">
             <tr>
-              <th className="px-4 py-2">Event</th>
-              <th className="px-4 py-2">When</th>
-              <th className="px-4 py-2">Where</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">
+                Event
+              </th>
+              <th className="px-4 py-2">
+                When
+              </th>
+              <th className="px-4 py-2">
+                Where
+              </th>
+              <th className="px-4 py-2">
+                Type
+              </th>
+              <th className="px-4 py-2">
+                Status
+              </th>
               <th className="px-4 py-2">
                 Next step
               </th>
@@ -107,7 +134,9 @@ export default async function MyRequestsPage() {
                 </td>
 
                 <td className="px-4 py-3">
-                  {formatDateTime(r.event_start)}
+                  {formatDateTime(
+                    r.event_start
+                  )}
                 </td>
 
                 <td className="px-4 py-3 text-ink-muted">
@@ -115,9 +144,12 @@ export default async function MyRequestsPage() {
                 </td>
 
                 <td className="px-4 py-3 capitalize">
-                  {eventTypeLabel(r.event_type)}
+                  {eventTypeLabel(
+                    r.event_type
+                  )}
 
-                  {r.sensitivity === "sensitive" && (
+                  {r.sensitivity ===
+                    "sensitive" && (
                     <span className="badge bg-terra-100 text-terra-900 ml-2">
                       Sensitive
                     </span>
@@ -126,15 +158,21 @@ export default async function MyRequestsPage() {
 
                 <td className="px-4 py-3">
                   <span className="badge bg-brand-50 text-brand-700 capitalize">
-                    {requestStatusLabel(r.status)}
+                    {requestStatusLabel(
+                      r.status
+                    )}
                   </span>
                 </td>
 
                 <td className="px-4 py-3">
-                  {proposalsByRequest.has(r.id) ? (
+                  {proposalsByRequest.has(
+                    r.id
+                  ) ? (
                     <ProposalActions
                       proposal={
-                        proposalsByRequest.get(r.id)!
+                        proposalsByRequest.get(
+                          r.id
+                        )!
                       }
                     />
                   ) : r.status ===
@@ -180,7 +218,9 @@ function ProposalActions({
       <div className="flex items-start gap-3">
         {proposal.interpreter_photo_url ? (
           <img
-            src={proposal.interpreter_photo_url}
+            src={
+              proposal.interpreter_photo_url
+            }
             alt={`${proposal.interpreter_name} profile`}
             className="h-12 w-12 shrink-0 rounded-full border border-slate-200 object-cover"
           />
@@ -198,7 +238,8 @@ function ProposalActions({
           </p>
 
           <p className="text-xs text-ink-muted">
-            {proposal.interpreter_is_certified === true
+            {proposal.interpreter_is_certified ===
+            true
               ? "Certified"
               : proposal.interpreter_is_certified ===
                   false
@@ -220,8 +261,8 @@ function ProposalActions({
         </p>
       )}
 
-      {proposal.interpreter_certifications?.length >
-        0 && (
+      {proposal.interpreter_certifications
+        ?.length > 0 && (
         <p className="text-xs text-ink-muted">
           Certifications:{" "}
           {proposal.interpreter_certifications.join(
@@ -234,20 +275,22 @@ function ProposalActions({
         0 && (
         <p className="text-xs text-ink-muted">
           Specialties:{" "}
-          {proposal.interpreter_specialties.join(", ")}
+          {proposal.interpreter_specialties.join(
+            ", "
+          )}
         </p>
       )}
 
-      {proposal.interpreter_intro_video_url && (
+      {proposal.interpreter_video_url && (
         <a
           href={
-            proposal.interpreter_intro_video_url
+            proposal.interpreter_video_url
           }
           target="_blank"
           rel="noreferrer"
           className="mt-1 inline-block text-xs text-brand-700 underline"
         >
-          View introduction video
+          View ASL introduction
         </a>
       )}
 
