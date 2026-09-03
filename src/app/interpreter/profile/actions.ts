@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
-import { INTERPRETER_PHOTO_BUCKET } from "@/lib/interpreter-photos";
+import {
+  INTERPRETER_PHOTO_BUCKET,
+  INTERPRETER_VIDEO_BUCKET,
+} from "@/lib/interpreter-photos";
 
 const EXPERIENCE_BANDS = new Set([
   "less_than_2",
@@ -12,49 +15,70 @@ const EXPERIENCE_BANDS = new Set([
   "11_plus",
 ]);
 
-function parseList(value: FormDataEntryValue | null) {
+function parseList(
+  value: FormDataEntryValue | null
+) {
   return String(value ?? "")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
 }
 
-function parseOptionalHttpUrl(
+function parseOwnedMediaPath(
   value: FormDataEntryValue | null,
+  userId: string,
   label: string
 ) {
-  const raw = String(value ?? "").trim();
-  if (!raw) return null;
+  const path = String(value ?? "").trim();
 
-  try {
-    const url = new URL(raw);
-    if (url.protocol !== "https:" && url.protocol !== "http:") {
-      throw new Error();
-    }
-    return url.toString();
-  } catch {
-    throw new Error(`${label} must be a valid http or https link.`);
+  if (!path) {
+    return null;
   }
+
+  if (
+    !path.startsWith(`${userId}/`) ||
+    path.includes("..")
+  ) {
+    throw new Error(`${label} path is invalid.`);
+  }
+
+  return path;
 }
 
-export async function saveInterpreterProfileAction(formData: FormData) {
-  const supabase = createSupabaseServerClient();
+export async function saveInterpreterProfileAction(
+  formData: FormData
+) {
+  const supabase =
+    createSupabaseServerClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) throw new Error("Not signed in");
+  if (!user) {
+    throw new Error("Not signed in");
+  }
 
-  const home_address = String(formData.get("home_address") ?? "").trim();
+  const home_address = String(
+    formData.get("home_address") ?? ""
+  ).trim();
+
   const service_radius_miles = Number(
     formData.get("service_radius_miles") ?? 25
   );
-  const languages = parseList(formData.get("languages"));
-  const modalities = (formData.getAll("modalities") as string[]).filter(
-    Boolean
+
+  const languages = parseList(
+    formData.get("languages")
   );
+
+  const modalities = (
+    formData.getAll("modalities") as string[]
+  ).filter(Boolean);
+
   const credentials =
-    String(formData.get("credentials") ?? "").trim() || null;
+    String(
+      formData.get("credentials") ?? ""
+    ).trim() || null;
 
   const certificationAnswer = String(
     formData.get("is_certified") ?? ""
@@ -67,34 +91,49 @@ export async function saveInterpreterProfileAction(formData: FormData) {
         ? false
         : null;
 
-  const certifications = parseList(formData.get("certifications"));
-  const licenses = parseList(formData.get("licenses"));
-  const specialties = parseList(formData.get("specialties"));
+  const certifications = parseList(
+    formData.get("certifications")
+  );
+
+  const licenses = parseList(
+    formData.get("licenses")
+  );
+
+  const specialties = parseList(
+    formData.get("specialties")
+  );
 
   const rawExperienceBand = String(
     formData.get("experience_band") ?? ""
   );
-  const experience_band = rawExperienceBand || null;
 
-  if (experience_band && !EXPERIENCE_BANDS.has(experience_band)) {
-    throw new Error("Select a valid experience level.");
+  const experience_band =
+    rawExperienceBand || null;
+
+  if (
+    experience_band &&
+    !EXPERIENCE_BANDS.has(experience_band)
+  ) {
+    throw new Error(
+      "Select a valid experience level."
+    );
   }
-
-  const intro_video_url = parseOptionalHttpUrl(
-    formData.get("intro_video_url"),
-    "Introduction video"
-  );
 
   const willing_to_mentor =
     formData.get("willing_to_mentor") === "on";
 
   const willing_to_work_with_students =
-    formData.get("willing_to_work_with_students") === "on";
+    formData.get(
+      "willing_to_work_with_students"
+    ) === "on";
 
   const pro_bono_commitment =
-    String(formData.get("pro_bono_commitment") ?? "").trim() || null;
+    String(
+      formData.get("pro_bono_commitment") ?? ""
+    ).trim() || null;
 
-  const accept = formData.get("accept_pro_bono") === "on";
+  const accept =
+    formData.get("accept_pro_bono") === "on";
 
   let geo = null;
 
@@ -108,125 +147,158 @@ export async function saveInterpreterProfileAction(formData: FormData) {
     }
   }
 
-  const { data: existingProfile, error: existingProfileError } =
-    await supabase
-      .from("interpreter_profiles")
-      .select("profile_photo_path")
-      .eq("profile_id", user.id)
-      .maybeSingle();
+  const {
+    data: existingProfile,
+    error: existingProfileError,
+  } = await supabase
+    .from("interpreter_profiles")
+    .select(
+      "profile_photo_path,intro_video_path"
+    )
+    .eq("profile_id", user.id)
+    .maybeSingle();
 
   if (existingProfileError) {
-    throw new Error(existingProfileError.message);
+    throw new Error(
+      existingProfileError.message
+    );
   }
 
-  const photo = formData.get("profile_photo");
   const removePhoto =
-    formData.get("remove_profile_photo") === "on";
+    formData.get("remove_profile_photo") ===
+    "on";
 
-  let uploadedPhotoPath: string | null = null;
-  let nextPhotoPath: string | null | undefined;
+  const removeVideo =
+    formData.get("remove_intro_video") ===
+    "on";
 
-  if (photo instanceof File && photo.size > 0) {
-    const allowedTypes = new Map([
-      ["image/jpeg", "jpg"],
-      ["image/png", "png"],
-      ["image/webp", "webp"],
-    ]);
+  const submittedPhotoPath =
+    parseOwnedMediaPath(
+      formData.get("profile_photo_path"),
+      user.id,
+      "Profile photo"
+    );
 
-    const extension = allowedTypes.get(photo.type);
+  const submittedVideoPath =
+    parseOwnedMediaPath(
+      formData.get("intro_video_path"),
+      user.id,
+      "Introduction video"
+    );
 
-    if (!extension) {
-      throw new Error(
-        "Profile photo must be a JPG, PNG, or WebP image."
-      );
-    }
+  const nextPhotoPath = removePhoto
+    ? null
+    : submittedPhotoPath ??
+      existingProfile?.profile_photo_path ??
+      null;
 
-    if (photo.size > 5 * 1024 * 1024) {
-      throw new Error("Profile photo must be 5 MB or smaller.");
-    }
-
-    uploadedPhotoPath =
-      `${user.id}/profile-${Date.now()}.${extension}`;
-
-    const bytes = new Uint8Array(await photo.arrayBuffer());
-
-    const { error: uploadError } = await supabase.storage
-      .from(INTERPRETER_PHOTO_BUCKET)
-      .upload(uploadedPhotoPath, bytes, {
-        contentType: photo.type,
-        upsert: false,
-      });
-
-    if (uploadError) {
-      throw new Error(
-        `Could not upload profile photo: ${uploadError.message}`
-      );
-    }
-
-    nextPhotoPath = uploadedPhotoPath;
-  } else if (removePhoto) {
-    nextPhotoPath = null;
-  }
+  const nextVideoPath = removeVideo
+    ? null
+    : submittedVideoPath ??
+      existingProfile?.intro_video_path ??
+      null;
 
   const update: Record<string, unknown> = {
     profile_id: user.id,
-    home_address: geo?.formatted ?? home_address,
+    home_address:
+      geo?.formatted ?? home_address,
     service_radius_miles,
-    languages: languages.length ? languages : ["ASL"],
-    modalities: modalities.length ? modalities : ["in_person"],
+    languages: languages.length
+      ? languages
+      : ["ASL"],
+    modalities: modalities.length
+      ? modalities
+      : ["in_person"],
     credentials,
     is_certified,
     certifications,
     licenses,
     specialties,
     experience_band,
-    intro_video_url,
+    profile_photo_path: nextPhotoPath,
+    intro_video_path: nextVideoPath,
+    intro_video_url: null,
     willing_to_mentor,
     willing_to_work_with_students,
     pro_bono_commitment,
   };
 
-  if (nextPhotoPath !== undefined) {
-    update.profile_photo_path = nextPhotoPath;
-  }
-
   if (geo) {
     update.home_location =
-      `SRID=4326;POINT(${geo.longitude} ${geo.latitude})`;
+      `SRID=4326;POINT(` +
+      `${geo.longitude} ${geo.latitude})`;
   }
 
   if (accept && pro_bono_commitment) {
-    update.pro_bono_signed_at = new Date().toISOString();
+    update.pro_bono_signed_at =
+      new Date().toISOString();
   }
 
   const { error } = await supabase
     .from("interpreter_profiles")
-    .upsert(update, { onConflict: "profile_id" });
+    .upsert(update, {
+      onConflict: "profile_id",
+    });
 
   if (error) {
-    if (uploadedPhotoPath) {
+    if (
+      nextPhotoPath &&
+      nextPhotoPath !==
+        existingProfile?.profile_photo_path
+    ) {
       await supabase.storage
         .from(INTERPRETER_PHOTO_BUCKET)
-        .remove([uploadedPhotoPath]);
+        .remove([nextPhotoPath]);
+    }
+
+    if (
+      nextVideoPath &&
+      nextVideoPath !==
+        existingProfile?.intro_video_path
+    ) {
+      await supabase.storage
+        .from(INTERPRETER_VIDEO_BUCKET)
+        .remove([nextVideoPath]);
     }
 
     throw new Error(error.message);
   }
 
-  const previousPhotoPath = existingProfile?.profile_photo_path;
+  const previousPhotoPath =
+    existingProfile?.profile_photo_path;
 
   if (
-    nextPhotoPath !== undefined &&
     previousPhotoPath &&
     previousPhotoPath !== nextPhotoPath
   ) {
-    const { error: removalError } = await supabase.storage
-      .from(INTERPRETER_PHOTO_BUCKET)
-      .remove([previousPhotoPath]);
+    const { error: removalError } =
+      await supabase.storage
+        .from(INTERPRETER_PHOTO_BUCKET)
+        .remove([previousPhotoPath]);
 
     if (removalError) {
       console.error(
         "Could not remove previous profile photo:",
+        removalError
+      );
+    }
+  }
+
+  const previousVideoPath =
+    existingProfile?.intro_video_path;
+
+  if (
+    previousVideoPath &&
+    previousVideoPath !== nextVideoPath
+  ) {
+    const { error: removalError } =
+      await supabase.storage
+        .from(INTERPRETER_VIDEO_BUCKET)
+        .remove([previousVideoPath]);
+
+    if (removalError) {
+      console.error(
+        "Could not remove previous introduction video:",
         removalError
       );
     }
