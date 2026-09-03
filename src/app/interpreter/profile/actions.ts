@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { geocodeAddress } from "@/lib/geocode";
 import {
@@ -408,7 +409,9 @@ export async function saveInterpreterProfileAction(
   }
 
   revalidatePath("/interpreter/profile");
-  revalidatePath("/interpreter");
-  revalidatePath("/coordinator");
-  revalidatePath("/coordinator/interpreters");
+revalidatePath("/interpreter");
+revalidatePath("/coordinator");
+revalidatePath("/coordinator/interpreters");
+
+redirect("/interpreter/profile?saved=1");
 }
