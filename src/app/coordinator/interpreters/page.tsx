@@ -1,19 +1,34 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
 
 export default async function InterpretersDirectoryPage() {
   const supabase = createSupabaseServerClient();
+
   const { data: interpreters } = await supabase
     .from("profiles")
     .select(
-      "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,total_completed,pro_bono_signed_at)"
+      "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_url,willing_to_mentor,willing_to_work_with_students,total_completed,pro_bono_signed_at)"
     )
     .eq("role", "interpreter")
     .order("full_name");
 
+  const interpreterRows = await Promise.all(
+    (interpreters ?? []).map(async (interpreter: any) => ({
+      ...interpreter,
+      profilePhotoUrl: await createInterpreterPhotoUrl(
+        supabase,
+        interpreter.interp?.profile_photo_path
+      ),
+    }))
+  );
+
   return (
     <div>
       <h1 className="text-2xl font-semibold">Interpreters</h1>
-      <p className="text-ink-muted mt-1">The full roster of pro bono interpreters.</p>
+
+      <p className="text-ink-muted mt-1">
+        The full roster of pro bono interpreters.
+      </p>
 
       <div className="card mt-6 overflow-hidden">
         <table className="w-full text-sm">
@@ -22,30 +37,90 @@ export default async function InterpretersDirectoryPage() {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Home</th>
               <th className="px-4 py-2">Radius</th>
+              <th className="px-4 py-2">Qualifications</th>
               <th className="px-4 py-2">Languages</th>
               <th className="px-4 py-2">Pro bono done</th>
               <th className="px-4 py-2">Status</th>
             </tr>
           </thead>
+
           <tbody>
-            {interpreters?.map((p: any) => (
-              <tr key={p.id} className="border-t border-slate-100">
+            {interpreterRows.map((p: any) => (
+              <tr
+                key={p.id}
+                className="border-t border-slate-100"
+              >
                 <td className="px-4 py-3">
-                  <p className="font-medium">{p.full_name}</p>
-                  <p className="text-xs text-ink-muted">{p.email}</p>
+                  <div className="flex items-center gap-3">
+                    {p.profilePhotoUrl ? (
+                      <img
+                        src={p.profilePhotoUrl}
+                        alt={`${p.full_name} profile`}
+                        className="h-10 w-10 rounded-full border border-slate-200 object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-ink-muted">
+                        {p.full_name?.charAt(0)?.toUpperCase() ?? "I"}
+                      </div>
+                    )}
+
+                    <div>
+                      <p className="font-medium">{p.full_name}</p>
+                      <p className="text-xs text-ink-muted">
+                        {p.email}
+                      </p>
+                    </div>
+                  </div>
                 </td>
-                <td className="px-4 py-3">{p.interp?.home_address ?? "—"}</td>
-                <td className="px-4 py-3">{p.interp?.service_radius_miles ?? "—"} mi</td>
-                <td className="px-4 py-3">{p.interp?.languages?.join(", ") ?? "—"}</td>
-                <td className="px-4 py-3">{p.interp?.total_completed ?? 0}</td>
+
+                <td className="px-4 py-3">
+                  {p.interp?.home_address ?? "—"}
+                </td>
+
+                <td className="px-4 py-3">
+                  {p.interp?.service_radius_miles ?? "—"} mi
+                </td>
+
+                <td className="px-4 py-3">
+                  <p>
+                    {p.interp?.is_certified === true
+                      ? "Certified"
+                      : p.interp?.is_certified === false
+                        ? "Not certified"
+                        : "Certification not provided"}
+                  </p>
+
+                  {p.interp?.experience_band && (
+                    <p className="text-xs text-ink-muted">
+                      {experienceBandLabel(
+                        p.interp.experience_band
+                      )}
+                    </p>
+                  )}
+
+                  {p.interp?.specialties?.length > 0 && (
+                    <p className="text-xs text-ink-muted">
+                      {p.interp.specialties.join(", ")}
+                    </p>
+                  )}
+                </td>
+
+                <td className="px-4 py-3">
+                  {p.interp?.languages?.join(", ") ?? "—"}
+                </td>
+
+                <td className="px-4 py-3">
+                  {p.interp?.total_completed ?? 0}
+                </td>
+
                 <td className="px-4 py-3">
                   <span
                     className={`badge capitalize ${
                       p.status === "active"
                         ? "bg-emerald-50 text-emerald-700"
                         : p.status === "pending"
-                        ? "bg-amber-50 text-amber-700"
-                        : "bg-slate-100 text-slate-600"
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-slate-100 text-slate-600"
                     }`}
                   >
                     {p.status}
@@ -58,4 +133,15 @@ export default async function InterpretersDirectoryPage() {
       </div>
     </div>
   );
+}
+
+function experienceBandLabel(value: string) {
+  const labels: Record<string, string> = {
+    less_than_2: "Less than 2 years",
+    "2_to_5": "2–5 years",
+    "6_to_10": "6–10 years",
+    "11_plus": "11+ years",
+  };
+
+  return labels[value] ?? value;
 }
