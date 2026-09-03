@@ -87,6 +87,8 @@ export interface InterpreterProfile {
   intro_video_path: string | null;
   willing_to_mentor: boolean;
   willing_to_work_with_students: boolean;
+  is_advanced_itp_student: boolean;
+  college_name: string | null;
   pro_bono_commitment: string | null;
   pro_bono_signed_at: string | null;
   notes: string | null;
