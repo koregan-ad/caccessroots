@@ -78,6 +78,7 @@ export interface InterpreterProfile {
   specialties: string[];
   experience_band: string | null;
   profile_photo_url: string | null;
+  profile_photo_path: string | null;
   intro_video_url: string | null;
   willing_to_mentor: boolean;
   willing_to_work_with_students: boolean;
