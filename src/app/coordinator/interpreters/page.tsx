@@ -1,30 +1,49 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
+import {
+  createInterpreterPhotoUrl,
+  createInterpreterVideoUrl,
+} from "@/lib/interpreter-photos";
 
 export default async function InterpretersDirectoryPage() {
-  const supabase = createSupabaseServerClient();
+  const supabase =
+    createSupabaseServerClient();
 
-  const { data: interpreters } = await supabase
-    .from("profiles")
-    .select(
-      "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_url,willing_to_mentor,willing_to_work_with_students,total_completed,pro_bono_signed_at)"
-    )
-    .eq("role", "interpreter")
-    .order("full_name");
+  const { data: interpreters } =
+    await supabase
+      .from("profiles")
+      .select(
+        "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,total_completed,pro_bono_signed_at)"
+      )
+      .eq("role", "interpreter")
+      .order("full_name");
 
   const interpreterRows = await Promise.all(
-    (interpreters ?? []).map(async (interpreter: any) => ({
-      ...interpreter,
-      profilePhotoUrl: await createInterpreterPhotoUrl(
-        supabase,
-        interpreter.interp?.profile_photo_path
-      ),
-    }))
+    (interpreters ?? []).map(
+      async (interpreter: any) => ({
+        ...interpreter,
+
+        profilePhotoUrl:
+          await createInterpreterPhotoUrl(
+            supabase,
+            interpreter.interp
+              ?.profile_photo_path
+          ),
+
+        introVideoUrl:
+          await createInterpreterVideoUrl(
+            supabase,
+            interpreter.interp
+              ?.intro_video_path
+          ),
+      })
+    )
   );
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Interpreters</h1>
+      <h1 className="text-2xl font-semibold">
+        Interpreters
+      </h1>
 
       <p className="text-ink-muted mt-1">
         The full roster of pro bono interpreters.
@@ -34,13 +53,27 @@ export default async function InterpretersDirectoryPage() {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-ink-muted">
             <tr>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Home</th>
-              <th className="px-4 py-2">Radius</th>
-              <th className="px-4 py-2">Qualifications</th>
-              <th className="px-4 py-2">Languages</th>
-              <th className="px-4 py-2">Pro bono done</th>
-              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">
+                Name
+              </th>
+              <th className="px-4 py-2">
+                Home
+              </th>
+              <th className="px-4 py-2">
+                Radius
+              </th>
+              <th className="px-4 py-2">
+                Qualifications
+              </th>
+              <th className="px-4 py-2">
+                Languages
+              </th>
+              <th className="px-4 py-2">
+                Pro bono done
+              </th>
+              <th className="px-4 py-2">
+                Status
+              </th>
             </tr>
           </thead>
 
@@ -56,16 +89,21 @@ export default async function InterpretersDirectoryPage() {
                       <img
                         src={p.profilePhotoUrl}
                         alt={`${p.full_name} profile`}
-                        className="h-10 w-10 rounded-full border border-slate-200 object-cover"
+                        className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover"
                       />
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-ink-muted">
-                        {p.full_name?.charAt(0)?.toUpperCase() ?? "I"}
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-ink-muted">
+                        {p.full_name
+                          ?.charAt(0)
+                          ?.toUpperCase() ?? "I"}
                       </div>
                     )}
 
                     <div>
-                      <p className="font-medium">{p.full_name}</p>
+                      <p className="font-medium">
+                        {p.full_name}
+                      </p>
+
                       <p className="text-xs text-ink-muted">
                         {p.email}
                       </p>
@@ -78,14 +116,17 @@ export default async function InterpretersDirectoryPage() {
                 </td>
 
                 <td className="px-4 py-3">
-                  {p.interp?.service_radius_miles ?? "—"} mi
+                  {p.interp
+                    ?.service_radius_miles ?? "—"}{" "}
+                  mi
                 </td>
 
                 <td className="px-4 py-3">
                   <p>
                     {p.interp?.is_certified === true
                       ? "Certified"
-                      : p.interp?.is_certified === false
+                      : p.interp?.is_certified ===
+                          false
                         ? "Not certified"
                         : "Certification not provided"}
                   </p>
@@ -98,15 +139,31 @@ export default async function InterpretersDirectoryPage() {
                     </p>
                   )}
 
-                  {p.interp?.specialties?.length > 0 && (
+                  {p.interp?.specialties?.length >
+                    0 && (
                     <p className="text-xs text-ink-muted">
-                      {p.interp.specialties.join(", ")}
+                      {p.interp.specialties.join(
+                        ", "
+                      )}
                     </p>
+                  )}
+
+                  {p.introVideoUrl && (
+                    <a
+                      href={p.introVideoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-block text-xs text-brand-700 underline"
+                    >
+                      View ASL introduction
+                    </a>
                   )}
                 </td>
 
                 <td className="px-4 py-3">
-                  {p.interp?.languages?.join(", ") ?? "—"}
+                  {p.interp?.languages?.join(
+                    ", "
+                  ) ?? "—"}
                 </td>
 
                 <td className="px-4 py-3">
