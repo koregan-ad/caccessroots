@@ -23,7 +23,11 @@ const TIME_BLOCKS = [
   ["evening", "Evening"],
 ] as const;
 
-export default async function InterpreterProfilePage() {
+export default async function InterpreterProfilePage({
+  searchParams,
+}: {
+  searchParams?: { saved?: string };
+}) {
   const profile = await requireProfile();
   const supabase = createSupabaseServerClient();
 
@@ -52,12 +56,21 @@ export default async function InterpreterProfilePage() {
       </h1>
 
       <p className="text-ink-muted mt-1">
-        This information helps us match you with requests close to home and
-        appropriate to your skills.
-      </p>
+  This information helps us match you with requests close to home and
+  appropriate to your skills.
+</p>
 
-      <form
-        action={saveInterpreterProfileAction}
+{searchParams?.saved === "1" && (
+  <div
+    role="status"
+    className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+  >
+    Your interpreter profile was saved successfully.
+  </div>
+)}
+
+<form
+  action={saveInterpreterProfileAction}
         className="card p-6 mt-6 space-y-4"
       >
         <div>
