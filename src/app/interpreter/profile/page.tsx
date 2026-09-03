@@ -7,6 +7,22 @@ import {
 import { saveInterpreterProfileAction } from "./actions";
 import { ProfileMediaUploader } from "./profile-media-uploader";
 
+const AVAILABLE_DAYS = [
+  ["monday", "Monday"],
+  ["tuesday", "Tuesday"],
+  ["wednesday", "Wednesday"],
+  ["thursday", "Thursday"],
+  ["friday", "Friday"],
+  ["saturday", "Saturday"],
+  ["sunday", "Sunday"],
+] as const;
+
+const TIME_BLOCKS = [
+  ["morning", "Morning"],
+  ["afternoon", "Afternoon"],
+  ["evening", "Evening"],
+] as const;
+
 export default async function InterpreterProfilePage() {
   const profile = await requireProfile();
   const supabase = createSupabaseServerClient();
@@ -143,6 +159,130 @@ export default async function InterpreterProfilePage() {
               />
               Video
             </label>
+          </div>
+        </fieldset>
+
+        <fieldset className="rounded-xl border border-slate-200 p-4 space-y-4">
+          <legend className="px-2 text-sm font-medium">
+            Availability
+          </legend>
+
+          <input
+            type="hidden"
+            name="availability_fields_present"
+            value="true"
+          />
+
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              name="accepting_requests"
+              defaultChecked={
+                row?.accepting_requests ?? true
+              }
+              className="mt-1"
+            />
+
+            <span>
+              <span className="block font-medium">
+                I am currently accepting requests
+              </span>
+
+              <span className="block text-xs text-ink-muted mt-1">
+                Turn this off if you want to temporarily pause new matches.
+              </span>
+            </span>
+          </label>
+
+          <div>
+            <p className="label">
+              Days generally available
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {AVAILABLE_DAYS.map(
+                ([value, label]) => (
+                  <label
+                    key={value}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="available_days"
+                      value={value}
+                      defaultChecked={
+                        row?.available_days?.includes(
+                          value
+                        ) ?? false
+                      }
+                    />
+                    {label}
+                  </label>
+                )
+              )}
+            </div>
+
+            <p className="text-xs text-ink-muted mt-2">
+              Leave all days unchecked if your schedule is flexible or varies.
+            </p>
+          </div>
+
+          <div>
+            <p className="label">
+              Preferred times
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              {TIME_BLOCKS.map(
+                ([value, label]) => (
+                  <label
+                    key={value}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="preferred_time_blocks"
+                      value={value}
+                      defaultChecked={
+                        row?.preferred_time_blocks?.includes(
+                          value
+                        ) ?? false
+                      }
+                    />
+                    {label}
+                  </label>
+                )
+              )}
+            </div>
+
+            <p className="text-xs text-ink-muted mt-2">
+              Leave all times unchecked if you do not have a regular
+              preference.
+            </p>
+          </div>
+
+          <div>
+            <label
+              className="label"
+              htmlFor="unavailable_until"
+            >
+              Unavailable until
+            </label>
+
+            <input
+              id="unavailable_until"
+              name="unavailable_until"
+              type="date"
+              className="input"
+              defaultValue={
+                row?.unavailable_until ?? ""
+              }
+            />
+
+            <p className="text-xs text-ink-muted mt-1">
+              Optional. Use this for a vacation, leave, or other temporary
+              break.
+            </p>
           </div>
         </fieldset>
 
