@@ -71,6 +71,10 @@ export interface InterpreterProfile {
   service_radius_miles: number;
   languages: string[];
   modalities: string[];
+  accepting_requests: boolean;
+  available_days: string[];
+  preferred_time_blocks: string[];
+  unavailable_until: string | null;
   credentials: string | null;
   is_certified: boolean | null;
   certifications: string[];
