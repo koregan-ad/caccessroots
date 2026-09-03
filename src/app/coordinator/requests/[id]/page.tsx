@@ -272,6 +272,17 @@ export default async function MatchRequestPage({
                 : ""}
             </dd>
           </div>
+          <div>
+  <dt className="text-ink-muted">
+    Advanced ITP student
+  </dt>
+
+  <dd>
+    {request.student_interpreter_allowed
+      ? "Requester is open to a student match"
+      : "Do not propose a student"}
+  </dd>
+</div>
         </dl>
 
         {request.description && (
