@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
+import {
+  createInterpreterPhotoUrl,
+  createInterpreterVideoUrl,
+} from "@/lib/interpreter-photos";
 import { formatDateTime, relativeFromNow } from "@/lib/utils";
 import type { InterpreterRecommendation } from "@/lib/types";
 import {
@@ -26,20 +29,28 @@ export default async function MatchRequestPage({
     .maybeSingle();
 
   if (error) {
-    console.error("Coordinator request load error:", error);
-    throw new Error(`Could not load request: ${error.message}`);
+    console.error(
+      "Coordinator request load error:",
+      error
+    );
+
+    throw new Error(
+      `Could not load request: ${error.message}`
+    );
   }
 
   if (!request) {
     notFound();
   }
 
-  const { data: requestor, error: requestorError } =
-    await supabase
-      .from("profiles")
-      .select("full_name,email")
-      .eq("id", request.requestor_id)
-      .maybeSingle();
+  const {
+    data: requestor,
+    error: requestorError,
+  } = await supabase
+    .from("profiles")
+    .select("full_name,email")
+    .eq("id", request.requestor_id)
+    .maybeSingle();
 
   if (requestorError) {
     console.error(
@@ -51,28 +62,34 @@ export default async function MatchRequestPage({
   let recs: InterpreterRecommendation[] = [];
 
   if (request.status === "open") {
-    const { data, error: recError } = await supabase.rpc(
-      "match_interpreters_for_request",
-      {
-        p_request_id: params.id,
-      }
-    );
+    const { data, error: recError } =
+      await supabase.rpc(
+        "match_interpreters_for_request",
+        {
+          p_request_id: params.id,
+        }
+      );
 
     if (recError) {
       throw new Error(recError.message);
     }
 
-    recs = (data ?? []) as InterpreterRecommendation[];
+    recs =
+      (data ?? []) as InterpreterRecommendation[];
   }
 
-  const { data: assignmentRows, error: assignmentError } =
-    await supabase
-      .from("assignments")
-      .select(
-        "id,interpreter_id,status,accepted_at,declined_at,decline_reason,created_at"
-      )
-      .eq("request_id", params.id)
-      .order("created_at", { ascending: false });
+  const {
+    data: assignmentRows,
+    error: assignmentError,
+  } = await supabase
+    .from("assignments")
+    .select(
+      "id,interpreter_id,status,accepted_at,declined_at,decline_reason,created_at"
+    )
+    .eq("request_id", params.id)
+    .order("created_at", {
+      ascending: false,
+    });
 
   if (assignmentError) {
     throw new Error(assignmentError.message);
@@ -85,7 +102,7 @@ export default async function MatchRequestPage({
     ? await supabase
         .from("interpreter_profiles")
         .select(
-          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_url,willing_to_mentor,willing_to_work_with_students"
+          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students"
         )
         .in(
           "profile_id",
@@ -94,10 +111,15 @@ export default async function MatchRequestPage({
               recommendation.interpreter_id
           )
         )
-    : { data: [], error: null };
+    : {
+        data: [],
+        error: null,
+      };
 
   if (interpreterDetailsError) {
-    throw new Error(interpreterDetailsError.message);
+    throw new Error(
+      interpreterDetailsError.message
+    );
   }
 
   const interpreterDetailsById = new Map(
@@ -108,10 +130,17 @@ export default async function MatchRequestPage({
             details.profile_id,
             {
               ...details,
+
               profilePhotoUrl:
                 await createInterpreterPhotoUrl(
                   supabase,
                   details.profile_photo_path
+                ),
+
+              introVideoUrl:
+                await createInterpreterVideoUrl(
+                  supabase,
+                  details.intro_video_path
                 ),
             },
           ] as const
@@ -120,7 +149,9 @@ export default async function MatchRequestPage({
   );
 
   const recommendations = recs;
-  const assignmentByInterpreter = new Map<string, any>();
+
+  const assignmentByInterpreter =
+    new Map<string, any>();
 
   for (const assignment of assignmentRows ?? []) {
     if (
@@ -163,13 +194,15 @@ export default async function MatchRequestPage({
             <p className="text-ink-muted mt-1">
               {requestor?.full_name ??
                 "Unknown requestor"}
+
               {requestor?.email
                 ? ` (${requestor.email})`
                 : ""}
             </p>
           </div>
 
-          {request.sensitivity === "sensitive" && (
+          {request.sensitivity ===
+            "sensitive" && (
             <span className="badge bg-terra-100 text-terra-900">
               Sensitive — extra review required
             </span>
@@ -178,15 +211,27 @@ export default async function MatchRequestPage({
 
         <dl className="grid sm:grid-cols-2 gap-4 mt-4 text-sm">
           <div>
-            <dt className="text-ink-muted">When</dt>
+            <dt className="text-ink-muted">
+              When
+            </dt>
+
             <dd>
-              {formatDateTime(request.event_start)} (
-              {relativeFromNow(request.event_start)})
+              {formatDateTime(
+                request.event_start
+              )}{" "}
+              (
+              {relativeFromNow(
+                request.event_start
+              )}
+              )
             </dd>
           </div>
 
           <div>
-            <dt className="text-ink-muted">Where</dt>
+            <dt className="text-ink-muted">
+              Where
+            </dt>
+
             <dd>{request.event_address}</dd>
           </div>
 
@@ -194,6 +239,7 @@ export default async function MatchRequestPage({
             <dt className="text-ink-muted">
               Modality
             </dt>
+
             <dd className="capitalize">
               {(request as any).modality.replace(
                 "_",
@@ -206,11 +252,14 @@ export default async function MatchRequestPage({
             <dt className="text-ink-muted">
               Languages
             </dt>
+
             <dd>
               {Array.isArray(
                 request.languages_needed
               )
-                ? request.languages_needed.join(", ")
+                ? request.languages_needed.join(
+                    ", "
+                  )
                 : ""}
             </dd>
           </div>
@@ -236,7 +285,8 @@ export default async function MatchRequestPage({
 
           {request.notes_internal && (
             <p className="mt-2">
-              Review reason: {request.notes_internal}
+              Review reason:{" "}
+              {request.notes_internal}
             </p>
           )}
         </div>
@@ -246,6 +296,7 @@ export default async function MatchRequestPage({
         {canAssignNewInterpreter
           ? "Recommended interpreters"
           : "Match status"}{" "}
+
         {canAssignNewInterpreter && (
           <span className="text-sm text-ink-muted font-normal">
             ({recommendations.length} eligible after
@@ -290,7 +341,9 @@ export default async function MatchRequestPage({
                 <div className="flex items-start gap-3">
                   {details?.profilePhotoUrl ? (
                     <img
-                      src={details.profilePhotoUrl}
+                      src={
+                        details.profilePhotoUrl
+                      }
                       alt={`${r.full_name} profile`}
                       className="h-12 w-12 shrink-0 rounded-full border border-slate-200 object-cover"
                     />
@@ -309,8 +362,8 @@ export default async function MatchRequestPage({
 
                     <p className="text-sm text-ink-muted">
                       {r.distance_miles} mi away •
-                      radius {r.service_radius_miles}{" "}
-                      mi •{" "}
+                      radius{" "}
+                      {r.service_radius_miles} mi •{" "}
                       {r.within_service_radius ? (
                         <span className="text-emerald-700">
                           within radius
@@ -320,7 +373,8 @@ export default async function MatchRequestPage({
                           outside radius
                         </span>
                       )}{" "}
-                      • workload {r.active_workload} •{" "}
+                      • workload{" "}
+                      {r.active_workload} •{" "}
                       {r.total_completed} pro bono done
                     </p>
 
@@ -355,6 +409,19 @@ export default async function MatchRequestPage({
                           )}`
                         : ""}
                     </p>
+
+                    {details?.introVideoUrl && (
+                      <a
+                        href={
+                          details.introVideoUrl
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1 inline-block text-xs text-brand-700 underline"
+                      >
+                        View ASL introduction
+                      </a>
+                    )}
 
                     {wasWithdrawn && (
                       <p className="text-xs text-rose-600 mt-2">
@@ -438,7 +505,9 @@ export default async function MatchRequestPage({
                         <input
                           type="hidden"
                           name="interpreter_id"
-                          value={r.interpreter_id}
+                          value={
+                            r.interpreter_id
+                          }
                         />
 
                         <button className="btn-primary text-sm py-1.5 px-3">
@@ -460,10 +529,11 @@ export default async function MatchRequestPage({
         {canAssignNewInterpreter &&
           recommendations.length === 0 && (
             <div className="card p-6 text-center text-ink-muted">
-              No interpreters match this request&apos;s
-              filters. Consider widening the service
-              radius, contacting partner communities, or
-              flagging this for admin attention.
+              No interpreters match this
+              request&apos;s filters. Consider
+              widening the service radius, contacting
+              partner communities, or flagging this for
+              admin attention.
             </div>
           )}
 
