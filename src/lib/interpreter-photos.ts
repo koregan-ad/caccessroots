@@ -1,21 +1,51 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const INTERPRETER_PHOTO_BUCKET = "interpreter-profile-photos";
+export const INTERPRETER_PHOTO_BUCKET =
+  "interpreter-profile-photos";
 
-export async function createInterpreterPhotoUrl(
+export const INTERPRETER_VIDEO_BUCKET =
+  "interpreter-intro-videos";
+
+async function createInterpreterMediaUrl(
   supabase: SupabaseClient,
+  bucket: string,
   path: string | null | undefined
 ) {
   if (!path) return null;
 
   const { data, error } = await supabase.storage
-    .from(INTERPRETER_PHOTO_BUCKET)
+    .from(bucket)
     .createSignedUrl(path, 60 * 60);
 
   if (error) {
-    console.error("Could not create interpreter photo URL:", error);
+    console.error(
+      "Could not create interpreter media URL:",
+      error
+    );
     return null;
   }
 
   return data.signedUrl;
+}
+
+export async function createInterpreterPhotoUrl(
+  supabase: SupabaseClient,
+  path: string | null | undefined
+) {
+  return createInterpreterMediaUrl(
+    supabase,
+    INTERPRETER_PHOTO_BUCKET,
+    path
+  );
+}
+
+export async function createInterpreterVideoUrl(
+  supabase: SupabaseClient,
+  path: string | null | undefined
+) {
+  return createInterpreterMediaUrl(
+    supabase,
+    INTERPRETER_VIDEO_BUCKET,
+    path
+  );
 }
