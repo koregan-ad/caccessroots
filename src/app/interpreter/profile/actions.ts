@@ -15,13 +15,51 @@ const EXPERIENCE_BANDS = new Set([
   "11_plus",
 ]);
 
-function parseList(
-  value: FormDataEntryValue | null
-) {
+const AVAILABLE_DAYS = new Set([
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+]);
+
+const TIME_BLOCKS = new Set([
+  "morning",
+  "afternoon",
+  "evening",
+]);
+
+function parseList(value: FormDataEntryValue | null) {
   return String(value ?? "")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function parseAllowedSelections(
+  formData: FormData,
+  name: string,
+  allowedValues: ReadonlySet<string>,
+  label: string
+) {
+  const values = formData
+    .getAll(name)
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+
+  if (
+    values.some(
+      (value) => !allowedValues.has(value)
+    )
+  ) {
+    throw new Error(
+      `Select valid ${label.toLowerCase()}.`
+    );
+  }
+
+  return Array.from(new Set(values));
 }
 
 function parseOwnedMediaPath(
@@ -127,6 +165,70 @@ export async function saveInterpreterProfileAction(
       "willing_to_work_with_students"
     ) === "on";
 
+  /*
+   * This marker prevents the availability values from
+   * being overwritten before the new form controls are
+   * added to the profile page.
+   */
+  const availabilityFieldsPresent =
+    formData.get(
+      "availability_fields_present"
+    ) === "true";
+
+  const availabilityUpdate: Record<
+    string,
+    unknown
+  > = {};
+
+  if (availabilityFieldsPresent) {
+    const accepting_requests =
+      formData.get("accepting_requests") ===
+      "on";
+
+    const available_days =
+      parseAllowedSelections(
+        formData,
+        "available_days",
+        AVAILABLE_DAYS,
+        "available days"
+      );
+
+    const preferred_time_blocks =
+      parseAllowedSelections(
+        formData,
+        "preferred_time_blocks",
+        TIME_BLOCKS,
+        "preferred time blocks"
+      );
+
+    const rawUnavailableUntil = String(
+      formData.get("unavailable_until") ?? ""
+    ).trim();
+
+    const unavailable_until =
+      rawUnavailableUntil || null;
+
+    if (
+      unavailable_until &&
+      !/^\d{4}-\d{2}-\d{2}$/.test(
+        unavailable_until
+      )
+    ) {
+      throw new Error(
+        "Select a valid unavailable-until date."
+      );
+    }
+
+    availabilityUpdate.accepting_requests =
+      accepting_requests;
+    availabilityUpdate.available_days =
+      available_days;
+    availabilityUpdate.preferred_time_blocks =
+      preferred_time_blocks;
+    availabilityUpdate.unavailable_until =
+      unavailable_until;
+  }
+
   const pro_bono_commitment =
     String(
       formData.get("pro_bono_commitment") ?? ""
@@ -221,6 +323,7 @@ export async function saveInterpreterProfileAction(
     willing_to_mentor,
     willing_to_work_with_students,
     pro_bono_commitment,
+    ...availabilityUpdate,
   };
 
   if (geo) {
@@ -306,4 +409,6 @@ export async function saveInterpreterProfileAction(
 
   revalidatePath("/interpreter/profile");
   revalidatePath("/interpreter");
+  revalidatePath("/coordinator");
+  revalidatePath("/coordinator/interpreters");
 }
