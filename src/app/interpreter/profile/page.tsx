@@ -1,7 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
-import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
+import {
+  createInterpreterPhotoUrl,
+  createInterpreterVideoUrl,
+} from "@/lib/interpreter-photos";
 import { saveInterpreterProfileAction } from "./actions";
+import { ProfileMediaUploader } from "./profile-media-uploader";
 
 export default async function InterpreterProfilePage() {
   const profile = await requireProfile();
@@ -13,10 +17,17 @@ export default async function InterpreterProfilePage() {
     .eq("profile_id", profile.id)
     .maybeSingle();
 
-  const profilePhotoUrl = await createInterpreterPhotoUrl(
-    supabase,
-    row?.profile_photo_path
-  );
+  const profilePhotoUrl =
+    await createInterpreterPhotoUrl(
+      supabase,
+      row?.profile_photo_path
+    );
+
+  const introVideoUrl =
+    await createInterpreterVideoUrl(
+      supabase,
+      row?.intro_video_path
+    );
 
   return (
     <div className="max-w-2xl">
@@ -31,11 +42,13 @@ export default async function InterpreterProfilePage() {
 
       <form
         action={saveInterpreterProfileAction}
-        encType="multipart/form-data"
         className="card p-6 mt-6 space-y-4"
       >
         <div>
-          <label className="label" htmlFor="home_address">
+          <label
+            className="label"
+            htmlFor="home_address"
+          >
             Home address
           </label>
 
@@ -70,20 +83,27 @@ export default async function InterpreterProfilePage() {
               min={1}
               max={500}
               required
-              defaultValue={row?.service_radius_miles ?? 25}
+              defaultValue={
+                row?.service_radius_miles ?? 25
+              }
               className="input"
             />
           </div>
 
           <div>
-            <label className="label" htmlFor="languages">
+            <label
+              className="label"
+              htmlFor="languages"
+            >
               Languages
             </label>
 
             <input
               id="languages"
               name="languages"
-              defaultValue={(row?.languages ?? ["ASL"]).join(", ")}
+              defaultValue={(
+                row?.languages ?? ["ASL"]
+              ).join(", ")}
               className="input"
               placeholder="ASL, ProTactile, etc."
             />
@@ -102,7 +122,9 @@ export default async function InterpreterProfilePage() {
                 name="modalities"
                 value="in_person"
                 defaultChecked={
-                  row?.modalities?.includes("in_person") ?? true
+                  row?.modalities?.includes(
+                    "in_person"
+                  ) ?? true
                 }
               />
               In person
@@ -114,7 +136,9 @@ export default async function InterpreterProfilePage() {
                 name="modalities"
                 value="video"
                 defaultChecked={
-                  row?.modalities?.includes("video") ?? false
+                  row?.modalities?.includes(
+                    "video"
+                  ) ?? false
                 }
               />
               Video
@@ -123,7 +147,10 @@ export default async function InterpreterProfilePage() {
         </fieldset>
 
         <div>
-          <label className="label" htmlFor="credentials">
+          <label
+            className="label"
+            htmlFor="credentials"
+          >
             Credentials
           </label>
 
@@ -143,7 +170,10 @@ export default async function InterpreterProfilePage() {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="label" htmlFor="is_certified">
+              <label
+                className="label"
+                htmlFor="is_certified"
+              >
                 Are you currently certified?
               </label>
 
@@ -159,7 +189,9 @@ export default async function InterpreterProfilePage() {
                       : ""
                 }
               >
-                <option value="">Select an answer</option>
+                <option value="">
+                  Select an answer
+                </option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
@@ -177,7 +209,9 @@ export default async function InterpreterProfilePage() {
                 id="experience_band"
                 name="experience_band"
                 className="input"
-                defaultValue={row?.experience_band ?? ""}
+                defaultValue={
+                  row?.experience_band ?? ""
+                }
               >
                 <option value="">
                   Select an experience level
@@ -185,15 +219,24 @@ export default async function InterpreterProfilePage() {
                 <option value="less_than_2">
                   Less than 2 years
                 </option>
-                <option value="2_to_5">2–5 years</option>
-                <option value="6_to_10">6–10 years</option>
-                <option value="11_plus">11+ years</option>
+                <option value="2_to_5">
+                  2–5 years
+                </option>
+                <option value="6_to_10">
+                  6–10 years
+                </option>
+                <option value="11_plus">
+                  11+ years
+                </option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="label" htmlFor="certifications">
+            <label
+              className="label"
+              htmlFor="certifications"
+            >
               Certifications
             </label>
 
@@ -201,7 +244,9 @@ export default async function InterpreterProfilePage() {
               id="certifications"
               name="certifications"
               className="input"
-              defaultValue={(row?.certifications ?? []).join(", ")}
+              defaultValue={(
+                row?.certifications ?? []
+              ).join(", ")}
               placeholder="RID NIC, CDI, BEI, EIPA"
             />
 
@@ -212,7 +257,10 @@ export default async function InterpreterProfilePage() {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="label" htmlFor="licenses">
+              <label
+                className="label"
+                htmlFor="licenses"
+              >
                 Licenses
               </label>
 
@@ -220,13 +268,18 @@ export default async function InterpreterProfilePage() {
                 id="licenses"
                 name="licenses"
                 className="input"
-                defaultValue={(row?.licenses ?? []).join(", ")}
+                defaultValue={(
+                  row?.licenses ?? []
+                ).join(", ")}
                 placeholder="State license or permit"
               />
             </div>
 
             <div>
-              <label className="label" htmlFor="specialties">
+              <label
+                className="label"
+                htmlFor="specialties"
+              >
                 Specialties
               </label>
 
@@ -234,78 +287,27 @@ export default async function InterpreterProfilePage() {
                 id="specialties"
                 name="specialties"
                 className="input"
-                defaultValue={(row?.specialties ?? []).join(", ")}
+                defaultValue={(
+                  row?.specialties ?? []
+                ).join(", ")}
                 placeholder="DeafBlind, medical, legal"
               />
             </div>
           </div>
         </fieldset>
 
-        <fieldset className="rounded-xl border border-slate-200 p-4 space-y-4">
-          <legend className="px-2 text-sm font-medium">
-            Profile media
-          </legend>
-
-          <div>
-            <label className="label" htmlFor="profile_photo">
-              Profile photo
-            </label>
-
-            {profilePhotoUrl && (
-              <div className="mb-3 flex items-center gap-3">
-                <img
-                  src={profilePhotoUrl}
-                  alt={`${profile.full_name} profile`}
-                  className="h-20 w-20 rounded-full border border-slate-200 object-cover"
-                />
-
-                <label className="flex items-center gap-2 text-sm text-ink-muted">
-                  <input
-                    type="checkbox"
-                    name="remove_profile_photo"
-                  />
-                  Remove current photo
-                </label>
-              </div>
-            )}
-
-            <input
-              id="profile_photo"
-              name="profile_photo"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="input"
-            />
-
-            <p className="text-xs text-ink-muted mt-1">
-              JPG, PNG, or WebP. Maximum size 5 MB. Coordinators and admins can
-              view it; requesters see it only when you are proposed for their
-              request.
-            </p>
-          </div>
-
-          <div>
-            <label
-              className="label"
-              htmlFor="intro_video_url"
-            >
-              Introduction video link
-            </label>
-
-            <input
-              id="intro_video_url"
-              name="intro_video_url"
-              type="url"
-              className="input"
-              defaultValue={row?.intro_video_url ?? ""}
-              placeholder="https://example.com/video"
-            />
-          </div>
-
-          <p className="text-xs text-ink-muted">
-            Only add links you are comfortable sharing with coordinators.
-          </p>
-        </fieldset>
+        <ProfileMediaUploader
+          userId={profile.id}
+          fullName={profile.full_name}
+          currentPhotoPath={
+            row?.profile_photo_path ?? null
+          }
+          currentPhotoUrl={profilePhotoUrl}
+          currentVideoPath={
+            row?.intro_video_path ?? null
+          }
+          currentVideoUrl={introVideoUrl}
+        />
 
         <fieldset className="rounded-xl border border-slate-200 p-4 space-y-3">
           <legend className="px-2 text-sm font-medium">
@@ -316,12 +318,15 @@ export default async function InterpreterProfilePage() {
             <input
               type="checkbox"
               name="willing_to_mentor"
-              defaultChecked={row?.willing_to_mentor ?? false}
+              defaultChecked={
+                row?.willing_to_mentor ?? false
+              }
               className="mt-1"
             />
 
             <span>
-              I am willing to mentor another interpreter.
+              I am willing to mentor another
+              interpreter.
             </span>
           </label>
 
@@ -330,13 +335,15 @@ export default async function InterpreterProfilePage() {
               type="checkbox"
               name="willing_to_work_with_students"
               defaultChecked={
-                row?.willing_to_work_with_students ?? false
+                row?.willing_to_work_with_students ??
+                false
               }
               className="mt-1"
             />
 
             <span>
-              I am willing to work with approved interpreting students.
+              I am willing to work with approved
+              interpreting students.
             </span>
           </label>
         </fieldset>
@@ -353,7 +360,9 @@ export default async function InterpreterProfilePage() {
             id="pro_bono_commitment"
             name="pro_bono_commitment"
             className="input min-h-[96px]"
-            defaultValue={row?.pro_bono_commitment ?? ""}
+            defaultValue={
+              row?.pro_bono_commitment ?? ""
+            }
             placeholder="A few sentences about why you give pro bono time and what you'll offer the community."
           />
         </div>
@@ -362,15 +371,19 @@ export default async function InterpreterProfilePage() {
           <input
             type="checkbox"
             name="accept_pro_bono"
-            defaultChecked={!!row?.pro_bono_signed_at}
+            defaultChecked={
+              !!row?.pro_bono_signed_at
+            }
             className="mt-1"
           />
 
           <span>
-            I accept the pro bono terms — I will not invoice for assignments
-            taken through this platform, I will respect the privacy of every
-            requestor, and I will recuse myself from any assignment where I
-            become aware of a conflict.
+            I accept the pro bono terms — I will not
+            invoice for assignments taken through this
+            platform, I will respect the privacy of
+            every requestor, and I will recuse myself
+            from any assignment where I become aware of
+            a conflict.
           </span>
         </label>
 
