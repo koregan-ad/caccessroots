@@ -12,7 +12,7 @@ export default async function InterpretersDirectoryPage() {
     await supabase
       .from("profiles")
       .select(
-        "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,total_completed,pro_bono_signed_at)"
+        "id,full_name,email,status,interp:interpreter_profiles(home_address,service_radius_miles,languages,credentials,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,accepting_requests,available_days,preferred_time_blocks,unavailable_until,total_completed,pro_bono_signed_at)"
       )
       .eq("role", "interpreter")
       .order("full_name");
@@ -49,30 +49,40 @@ export default async function InterpretersDirectoryPage() {
         The full roster of pro bono interpreters.
       </p>
 
-      <div className="card mt-6 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="card mt-6 overflow-x-auto">
+        <table className="w-full min-w-[1200px] text-sm">
           <thead className="bg-slate-50 text-left text-ink-muted">
             <tr>
               <th className="px-4 py-2">
                 Name
               </th>
+
               <th className="px-4 py-2">
                 Home
               </th>
+
               <th className="px-4 py-2">
                 Radius
               </th>
+
               <th className="px-4 py-2">
                 Qualifications
               </th>
+
               <th className="px-4 py-2">
                 Languages
               </th>
+
+              <th className="px-4 py-2">
+                Availability
+              </th>
+
               <th className="px-4 py-2">
                 Pro bono done
               </th>
+
               <th className="px-4 py-2">
-                Status
+                Account status
               </th>
             </tr>
           </thead>
@@ -81,7 +91,7 @@ export default async function InterpretersDirectoryPage() {
             {interpreterRows.map((p: any) => (
               <tr
                 key={p.id}
-                className="border-t border-slate-100"
+                className="border-t border-slate-100 align-top"
               >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -167,6 +177,12 @@ export default async function InterpretersDirectoryPage() {
                 </td>
 
                 <td className="px-4 py-3">
+                  <AvailabilityDetails
+                    interpreter={p.interp}
+                  />
+                </td>
+
+                <td className="px-4 py-3">
                   {p.interp?.total_completed ?? 0}
                 </td>
 
@@ -185,10 +201,123 @@ export default async function InterpretersDirectoryPage() {
                 </td>
               </tr>
             ))}
+
+            {interpreterRows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={8}
+                  className="px-4 py-8 text-center text-ink-muted"
+                >
+                  No interpreter profiles found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </div>
+  );
+}
+
+function AvailabilityDetails({
+  interpreter,
+}: {
+  interpreter: any;
+}) {
+  if (!interpreter) {
+    return (
+      <span className="text-ink-muted">
+        Not provided
+      </span>
+    );
+  }
+
+  const availableDays =
+    interpreter.available_days ?? [];
+
+  const preferredTimeBlocks =
+    interpreter.preferred_time_blocks ?? [];
+
+  return (
+    <div className="min-w-48 space-y-1">
+      <span
+        className={`badge ${
+          interpreter.accepting_requests ??
+          true
+            ? "bg-emerald-50 text-emerald-700"
+            : "bg-amber-50 text-amber-700"
+        }`}
+      >
+        {interpreter.accepting_requests ??
+        true
+          ? "Accepting requests"
+          : "Paused"}
+      </span>
+
+      <p className="text-xs text-ink-muted">
+        <span className="font-medium text-ink">
+          Days:
+        </span>{" "}
+        {availableDays.length > 0
+          ? availableDays
+              .map(formatAvailabilityLabel)
+              .join(", ")
+          : "Flexible"}
+      </p>
+
+      <p className="text-xs text-ink-muted">
+        <span className="font-medium text-ink">
+          Times:
+        </span>{" "}
+        {preferredTimeBlocks.length > 0
+          ? preferredTimeBlocks
+              .map(formatAvailabilityLabel)
+              .join(", ")
+          : "Flexible"}
+      </p>
+
+      {interpreter.unavailable_until && (
+        <p className="text-xs font-medium text-amber-700">
+          Unavailable until{" "}
+          {formatAvailabilityDate(
+            interpreter.unavailable_until
+          )}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function formatAvailabilityLabel(
+  value: string
+) {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (character) =>
+      character.toUpperCase()
+    );
+}
+
+function formatAvailabilityDate(
+  value: string
+) {
+  const [year, month, day] = value
+    .split("-")
+    .map(Number);
+
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(
+    new Date(
+      Date.UTC(year, month - 1, day)
+    )
   );
 }
 
