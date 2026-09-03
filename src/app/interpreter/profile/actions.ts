@@ -166,6 +166,26 @@ export async function saveInterpreterProfileAction(
       "willing_to_work_with_students"
     ) === "on";
 
+  const is_advanced_itp_student =
+  formData.get(
+    "is_advanced_itp_student"
+  ) === "on";
+
+const college_name = is_advanced_itp_student
+  ? String(
+      formData.get("college_name") ?? ""
+    ).trim() || null
+  : null;
+
+if (
+  is_advanced_itp_student &&
+  !college_name
+) {
+  throw new Error(
+    "Enter the college or ITP program you attend."
+  );
+}
+
   /*
    * This marker prevents the availability values from
    * being overwritten before the new form controls are
@@ -323,6 +343,8 @@ export async function saveInterpreterProfileAction(
     intro_video_url: null,
     willing_to_mentor,
     willing_to_work_with_students,
+    is_advanced_itp_student,
+    college_name,
     pro_bono_commitment,
     ...availabilityUpdate,
   };
