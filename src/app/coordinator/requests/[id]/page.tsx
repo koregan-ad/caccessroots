@@ -420,6 +420,20 @@ export default async function MatchRequestPage({
                         : ""}
                     </p>
 
+                    {details?.is_advanced_itp_student && (
+  <div className="mt-2">
+    <span className="badge bg-blue-50 text-blue-700">
+      Advanced ITP student
+    </span>
+
+    {details.college_name && (
+      <span className="ml-2 text-xs text-ink-muted">
+        {details.college_name}
+      </span>
+    )}
+  </div>
+)}
+                    
                     <AvailabilityDetails
                       interpreter={details}
                     />
