@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createInterpreterPhotoUrl } from "@/lib/interpreter-photos";
 import { formatDateTime, relativeFromNow } from "@/lib/utils";
 import type { InterpreterRecommendation } from "@/lib/types";
-import { eventTypeLabel, requestStatusLabel } from "@/lib/request-workflow";
+import {
+  eventTypeLabel,
+  requestStatusLabel,
+} from "@/lib/request-workflow";
 import { proposeAssignmentAction } from "./actions";
 
 export default async function MatchRequestPage({
@@ -13,32 +17,36 @@ export default async function MatchRequestPage({
 }) {
   const supabase = createSupabaseServerClient();
 
- const { data: request, error } = await supabase
-  .from("requests")
-  .select(
-    "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
-  )
-  .eq("id", params.id)
-  .maybeSingle();
+  const { data: request, error } = await supabase
+    .from("requests")
+    .select(
+      "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
+    )
+    .eq("id", params.id)
+    .maybeSingle();
 
-if (error) {
-  console.error("Coordinator request load error:", error);
-  throw new Error(`Could not load request: ${error.message}`);
-}
+  if (error) {
+    console.error("Coordinator request load error:", error);
+    throw new Error(`Could not load request: ${error.message}`);
+  }
 
-if (!request) {
-  notFound();
-}
+  if (!request) {
+    notFound();
+  }
 
-const { data: requestor, error: requestorError } = await supabase
-  .from("profiles")
-  .select("full_name,email")
-  .eq("id", request.requestor_id)
-  .maybeSingle();
+  const { data: requestor, error: requestorError } =
+    await supabase
+      .from("profiles")
+      .select("full_name,email")
+      .eq("id", request.requestor_id)
+      .maybeSingle();
 
-if (requestorError) {
-  console.error("Coordinator requestor load error:", requestorError);
-}
+  if (requestorError) {
+    console.error(
+      "Coordinator requestor load error:",
+      requestorError
+    );
+  }
 
   let recs: InterpreterRecommendation[] = [];
 
@@ -57,32 +65,69 @@ if (requestorError) {
     recs = (data ?? []) as InterpreterRecommendation[];
   }
 
-  /*
-   * Get previous/current assignments for this request.
-   * This prevents the coordinator from accidentally creating
-   * duplicate assignments for the same interpreter.
-   */
-  const { data: assignmentRows, error: assignmentError } = await supabase
-    .from("assignments")
-    .select(
-      "id,interpreter_id,status,accepted_at,declined_at,decline_reason,created_at"
-    )
-    .eq("request_id", params.id)
-    .order("created_at", { ascending: false });
+  const { data: assignmentRows, error: assignmentError } =
+    await supabase
+      .from("assignments")
+      .select(
+        "id,interpreter_id,status,accepted_at,declined_at,decline_reason,created_at"
+      )
+      .eq("request_id", params.id)
+      .order("created_at", { ascending: false });
 
   if (assignmentError) {
     throw new Error(assignmentError.message);
   }
 
-  const recommendations = recs;
+  const {
+    data: interpreterDetails,
+    error: interpreterDetailsError,
+  } = recs.length
+    ? await supabase
+        .from("interpreter_profiles")
+        .select(
+          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_url,willing_to_mentor,willing_to_work_with_students"
+        )
+        .in(
+          "profile_id",
+          recs.map(
+            (recommendation) =>
+              recommendation.interpreter_id
+          )
+        )
+    : { data: [], error: null };
 
-  /*
-   * Keep the newest assignment record for each interpreter.
-   */
+  if (interpreterDetailsError) {
+    throw new Error(interpreterDetailsError.message);
+  }
+
+  const interpreterDetailsById = new Map(
+    await Promise.all(
+      (interpreterDetails ?? []).map(
+        async (details: any) =>
+          [
+            details.profile_id,
+            {
+              ...details,
+              profilePhotoUrl:
+                await createInterpreterPhotoUrl(
+                  supabase,
+                  details.profile_photo_path
+                ),
+            },
+          ] as const
+      )
+    )
+  );
+
+  const recommendations = recs;
   const assignmentByInterpreter = new Map<string, any>();
 
   for (const assignment of assignmentRows ?? []) {
-    if (!assignmentByInterpreter.has(assignment.interpreter_id)) {
+    if (
+      !assignmentByInterpreter.has(
+        assignment.interpreter_id
+      )
+    ) {
       assignmentByInterpreter.set(
         assignment.interpreter_id,
         assignment
@@ -90,15 +135,15 @@ if (requestorError) {
     }
   }
 
-  /*
-   * Only allow a new interpreter to be assigned when the
-   * request has returned to the open state.
-   */
-  const canAssignNewInterpreter = request.status === "open";
+  const canAssignNewInterpreter =
+    request.status === "open";
 
   return (
     <div>
-      <Link href="/coordinator" className="text-sm text-ink-muted">
+      <Link
+        href="/coordinator"
+        className="text-sm text-ink-muted"
+      >
         ← Back to queue
       </Link>
 
@@ -106,7 +151,9 @@ if (requestorError) {
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs uppercase tracking-wide text-ink-subtle">
-              {eventTypeLabel((request as any).event_type)}
+              {eventTypeLabel(
+                (request as any).event_type
+              )}
             </p>
 
             <h1 className="text-2xl font-semibold mt-1">
@@ -114,9 +161,12 @@ if (requestorError) {
             </h1>
 
             <p className="text-ink-muted mt-1">
-  {requestor?.full_name ?? "Unknown requestor"}
-  {requestor?.email ? ` (${requestor.email})` : ""}
-</p>
+              {requestor?.full_name ??
+                "Unknown requestor"}
+              {requestor?.email
+                ? ` (${requestor.email})`
+                : ""}
+            </p>
           </div>
 
           {request.sensitivity === "sensitive" && (
@@ -141,16 +191,25 @@ if (requestorError) {
           </div>
 
           <div>
-            <dt className="text-ink-muted">Modality</dt>
+            <dt className="text-ink-muted">
+              Modality
+            </dt>
             <dd className="capitalize">
-              {(request as any).modality.replace("_", " ")}
+              {(request as any).modality.replace(
+                "_",
+                " "
+              )}
             </dd>
           </div>
 
           <div>
-            <dt className="text-ink-muted">Languages</dt>
+            <dt className="text-ink-muted">
+              Languages
+            </dt>
             <dd>
-              {Array.isArray(request.languages_needed)
+              {Array.isArray(
+                request.languages_needed
+              )
                 ? request.languages_needed.join(", ")
                 : ""}
             </dd>
@@ -166,22 +225,31 @@ if (requestorError) {
 
       {request.status === "pending_review" && (
         <div className="mt-5 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">
-          <p className="font-semibold">Held for admin review</p>
-          <p className="mt-1">
-            This request cannot move forward until an admin approves it.
+          <p className="font-semibold">
+            Held for admin review
           </p>
+
+          <p className="mt-1">
+            This request cannot move forward until an
+            admin approves it.
+          </p>
+
           {request.notes_internal && (
-            <p className="mt-2">Review reason: {request.notes_internal}</p>
+            <p className="mt-2">
+              Review reason: {request.notes_internal}
+            </p>
           )}
         </div>
       )}
 
       <h2 className="text-xl font-semibold mt-8">
-        {canAssignNewInterpreter ? "Recommended interpreters" : "Match status"}{" "}
+        {canAssignNewInterpreter
+          ? "Recommended interpreters"
+          : "Match status"}{" "}
         {canAssignNewInterpreter && (
           <span className="text-sm text-ink-muted font-normal">
-            ({recommendations.length} eligible after COI / language / radius
-            filters)
+            ({recommendations.length} eligible after
+            COI / language / radius filters)
           </span>
         )}
       </h2>
@@ -189,160 +257,243 @@ if (requestorError) {
       <p className="text-sm text-ink-muted">
         {canAssignNewInterpreter
           ? "Ranked by fit. Blocklisted interpreters are excluded by the database — they do not appear here."
-          : `This request is ${requestStatusLabel(request.status).toLowerCase()}. No new interpreter can be proposed right now.`}
+          : `This request is ${requestStatusLabel(
+              request.status
+            ).toLowerCase()}. No new interpreter can be proposed right now.`}
       </p>
 
       <div className="space-y-3 mt-4">
-        {canAssignNewInterpreter && recommendations.map((r) => {
-          const existingAssignment = assignmentByInterpreter.get(
-            r.interpreter_id
-          );
+        {canAssignNewInterpreter &&
+          recommendations.map((r) => {
+            const existingAssignment =
+              assignmentByInterpreter.get(
+                r.interpreter_id
+              );
 
-          const wasWithdrawn =
-            existingAssignment?.status === "declined" &&
-            Boolean(existingAssignment?.accepted_at);
+            const details =
+              interpreterDetailsById.get(
+                r.interpreter_id
+              ) as any;
 
-          return (
-            <div
-              key={r.interpreter_id}
-              className="card p-4 flex items-center justify-between gap-4"
-            >
-              <div>
-                <p className="font-medium">{r.full_name}</p>
+            const wasWithdrawn =
+              existingAssignment?.status ===
+                "declined" &&
+              Boolean(
+                existingAssignment?.accepted_at
+              );
 
-                <p className="text-sm text-ink-muted">
-                  {r.distance_miles} mi away • radius{" "}
-                  {r.service_radius_miles} mi •{" "}
-                  {r.within_service_radius ? (
-                    <span className="text-emerald-700">
-                      within radius
-                    </span>
+            return (
+              <div
+                key={r.interpreter_id}
+                className="card p-4 flex items-center justify-between gap-4"
+              >
+                <div className="flex items-start gap-3">
+                  {details?.profilePhotoUrl ? (
+                    <img
+                      src={details.profilePhotoUrl}
+                      alt={`${r.full_name} profile`}
+                      className="h-12 w-12 shrink-0 rounded-full border border-slate-200 object-cover"
+                    />
                   ) : (
-                    <span className="text-rose-600">
-                      outside radius
-                    </span>
-                  )}{" "}
-                  • workload {r.active_workload} • {r.total_completed} pro bono
-                  done
-                </p>
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-ink-muted">
+                      {r.full_name
+                        ?.charAt(0)
+                        ?.toUpperCase() ?? "I"}
+                    </div>
+                  )}
 
-                <p className="text-xs text-ink-muted mt-1">
-                  Languages:{" "}
-                  {Array.isArray(r.languages)
-                    ? r.languages.join(", ")
-                    : ""}{" "}
-                  • Modalities:{" "}
-                  {Array.isArray(r.modalities)
-                    ? r.modalities.join(", ")
-                    : ""}
-                </p>
-
-                {wasWithdrawn && (
-                  <p className="text-xs text-rose-600 mt-2">
-                    This interpreter previously accepted and withdrew from this
-                    request.
-                  </p>
-                )}
-
-                {existingAssignment?.status === "declined" &&
-                  !wasWithdrawn && (
-                    <p className="text-xs text-ink-muted mt-2">
-                      This interpreter previously declined this request.
+                  <div>
+                    <p className="font-medium">
+                      {r.full_name}
                     </p>
-                  )}
-              </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold">
-                  {r.fit_score}{" "}
-                  <span className="text-ink-muted text-xs">
-                    fit
+                    <p className="text-sm text-ink-muted">
+                      {r.distance_miles} mi away •
+                      radius {r.service_radius_miles}{" "}
+                      mi •{" "}
+                      {r.within_service_radius ? (
+                        <span className="text-emerald-700">
+                          within radius
+                        </span>
+                      ) : (
+                        <span className="text-rose-600">
+                          outside radius
+                        </span>
+                      )}{" "}
+                      • workload {r.active_workload} •{" "}
+                      {r.total_completed} pro bono done
+                    </p>
+
+                    <p className="text-xs text-ink-muted mt-1">
+                      Languages:{" "}
+                      {Array.isArray(r.languages)
+                        ? r.languages.join(", ")
+                        : ""}{" "}
+                      • Modalities:{" "}
+                      {Array.isArray(r.modalities)
+                        ? r.modalities.join(", ")
+                        : ""}
+                    </p>
+
+                    <p className="text-xs text-ink-muted mt-1">
+                      {details?.is_certified === true
+                        ? "Certified"
+                        : details?.is_certified ===
+                            false
+                          ? "Not certified"
+                          : "Certification not provided"}
+
+                      {details?.experience_band
+                        ? ` • ${experienceBandLabel(
+                            details.experience_band
+                          )}`
+                        : ""}
+
+                      {details?.specialties?.length
+                        ? ` • ${details.specialties.join(
+                            ", "
+                          )}`
+                        : ""}
+                    </p>
+
+                    {wasWithdrawn && (
+                      <p className="text-xs text-rose-600 mt-2">
+                        This interpreter previously
+                        accepted and withdrew from this
+                        request.
+                      </p>
+                    )}
+
+                    {existingAssignment?.status ===
+                      "declined" &&
+                      !wasWithdrawn && (
+                        <p className="text-xs text-ink-muted mt-2">
+                          This interpreter previously
+                          declined this request.
+                        </p>
+                      )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold">
+                    {r.fit_score}{" "}
+                    <span className="text-ink-muted text-xs">
+                      fit
+                    </span>
                   </span>
-                </span>
 
-                {existingAssignment?.status === "accepted" && (
-                  <span className="badge bg-brand-50 text-brand-700">
-                    Accepted
-                  </span>
-                )}
-
-                {existingAssignment?.status === "released" && (
-                  <span className="badge bg-brand-50 text-brand-700">
-                    Awaiting response
-                  </span>
-                )}
-
-                {(existingAssignment?.status === "proposed" ||
-                  existingAssignment?.status ===
-                    "pending_admin_release") && (
-                  <span className="badge bg-brand-50 text-brand-700">
-                    Proposed
-                  </span>
-                )}
-
-                {wasWithdrawn && (
-                  <span className="badge bg-terra-100 text-terra-900">
-                    Withdrawn
-                  </span>
-                )}
-
-                {existingAssignment?.status === "declined" &&
-                  !wasWithdrawn && (
-                    <span className="badge bg-terra-100 text-terra-900">
-                      Declined
+                  {existingAssignment?.status ===
+                    "accepted" && (
+                    <span className="badge bg-brand-50 text-brand-700">
+                      Accepted
                     </span>
                   )}
 
-               {canAssignNewInterpreter &&
-                (!existingAssignment ||
-                existingAssignment.status === "declined") && (
-                <form action={proposeAssignmentAction}>
-                      <input
-                        type="hidden"
-                        name="request_id"
-                        value={request.id}
-                      />
-
-                      <input
-                        type="hidden"
-                        name="interpreter_id"
-                        value={r.interpreter_id}
-                      />
-
-                      <button className="btn-primary text-sm py-1.5 px-3">
-                        {existingAssignment?.status === "declined"
-                        ? "Reassign"
-                        : request.sensitivity === "sensitive"
-                        ? "Send for admin review"
-                        : "Propose to requester"}
-                      </button>
-                    </form>
+                  {existingAssignment?.status ===
+                    "released" && (
+                    <span className="badge bg-brand-50 text-brand-700">
+                      Awaiting response
+                    </span>
                   )}
-              </div>
-            </div>
-          );
-        })}
 
-        {canAssignNewInterpreter && recommendations.length === 0 && (
-          <div className="card p-6 text-center text-ink-muted">
-            No interpreters match this request's filters. Consider widening the
-            service radius, contacting partner communities, or flagging this
-            for admin attention.
-          </div>
-        )}
+                  {(existingAssignment?.status ===
+                    "proposed" ||
+                    existingAssignment?.status ===
+                      "pending_admin_release") && (
+                    <span className="badge bg-brand-50 text-brand-700">
+                      Proposed
+                    </span>
+                  )}
+
+                  {wasWithdrawn && (
+                    <span className="badge bg-terra-100 text-terra-900">
+                      Withdrawn
+                    </span>
+                  )}
+
+                  {existingAssignment?.status ===
+                    "declined" &&
+                    !wasWithdrawn && (
+                      <span className="badge bg-terra-100 text-terra-900">
+                        Declined
+                      </span>
+                    )}
+
+                  {canAssignNewInterpreter &&
+                    (!existingAssignment ||
+                      existingAssignment.status ===
+                        "declined") && (
+                      <form
+                        action={
+                          proposeAssignmentAction
+                        }
+                      >
+                        <input
+                          type="hidden"
+                          name="request_id"
+                          value={request.id}
+                        />
+
+                        <input
+                          type="hidden"
+                          name="interpreter_id"
+                          value={r.interpreter_id}
+                        />
+
+                        <button className="btn-primary text-sm py-1.5 px-3">
+                          {existingAssignment?.status ===
+                          "declined"
+                            ? "Reassign"
+                            : request.sensitivity ===
+                                "sensitive"
+                              ? "Send for admin review"
+                              : "Propose to requester"}
+                        </button>
+                      </form>
+                    )}
+                </div>
+              </div>
+            );
+          })}
+
+        {canAssignNewInterpreter &&
+          recommendations.length === 0 && (
+            <div className="card p-6 text-center text-ink-muted">
+              No interpreters match this request&apos;s
+              filters. Consider widening the service
+              radius, contacting partner communities, or
+              flagging this for admin attention.
+            </div>
+          )}
 
         {!canAssignNewInterpreter && (
           <div className="card p-6 text-center text-ink-muted">
             {request.status === "proposed"
               ? "The proposed match is waiting for the requester’s decision. The interpreter has not been contacted."
-              : request.status === "pending_acceptance"
+              : request.status ===
+                  "pending_acceptance"
                 ? "The requester accepted the match. The interpreter can now accept or decline it."
-                : request.status === "pending_review"
+                : request.status ===
+                    "pending_review"
                   ? "An admin must finish the review before matching can continue."
-                  : `Current status: ${requestStatusLabel(request.status)}.`}
+                  : `Current status: ${requestStatusLabel(
+                      request.status
+                    )}.`}
           </div>
         )}
       </div>
     </div>
   );
+}
+
+function experienceBandLabel(value: string) {
+  const labels: Record<string, string> = {
+    less_than_2: "Less than 2 years",
+    "2_to_5": "2–5 years",
+    "6_to_10": "6–10 years",
+    "11_plus": "11+ years",
+  };
+
+  return labels[value] ?? value;
 }
