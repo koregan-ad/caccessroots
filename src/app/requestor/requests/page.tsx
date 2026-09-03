@@ -24,14 +24,15 @@ type ProposalRow = {
   interpreter_profile_photo_path: string | null;
   interpreter_intro_video_url: string | null;
   interpreter_intro_video_path: string | null;
+  interpreter_is_advanced_itp_student: boolean;
+  interpreter_college_name: string | null;
   interpreter_photo_url?: string | null;
   interpreter_video_url?: string | null;
 };
 
 export default async function MyRequestsPage() {
   const profile = await requireProfile();
-  const supabase =
-    createSupabaseServerClient();
+  const supabase = createSupabaseServerClient();
 
   const { data: requests } = await supabase
     .from("requests")
@@ -105,18 +106,23 @@ export default async function MyRequestsPage() {
               <th className="px-4 py-2">
                 Event
               </th>
+
               <th className="px-4 py-2">
                 When
               </th>
+
               <th className="px-4 py-2">
                 Where
               </th>
+
               <th className="px-4 py-2">
                 Type
               </th>
+
               <th className="px-4 py-2">
                 Status
               </th>
+
               <th className="px-4 py-2">
                 Next step
               </th>
@@ -124,31 +130,31 @@ export default async function MyRequestsPage() {
           </thead>
 
           <tbody>
-            {requests?.map((r) => (
+            {requests?.map((request) => (
               <tr
-                key={r.id}
+                key={request.id}
                 className="border-t border-slate-100"
               >
                 <td className="px-4 py-3 font-medium">
-                  {r.title}
+                  {request.title}
                 </td>
 
                 <td className="px-4 py-3">
                   {formatDateTime(
-                    r.event_start
+                    request.event_start
                   )}
                 </td>
 
                 <td className="px-4 py-3 text-ink-muted">
-                  {r.event_address}
+                  {request.event_address}
                 </td>
 
                 <td className="px-4 py-3 capitalize">
                   {eventTypeLabel(
-                    r.event_type
+                    request.event_type
                   )}
 
-                  {r.sensitivity ===
+                  {request.sensitivity ===
                     "sensitive" && (
                     <span className="badge bg-terra-100 text-terra-900 ml-2">
                       Sensitive
@@ -159,23 +165,23 @@ export default async function MyRequestsPage() {
                 <td className="px-4 py-3">
                   <span className="badge bg-brand-50 text-brand-700 capitalize">
                     {requestStatusLabel(
-                      r.status
+                      request.status
                     )}
                   </span>
                 </td>
 
                 <td className="px-4 py-3">
                   {proposalsByRequest.has(
-                    r.id
+                    request.id
                   ) ? (
                     <ProposalActions
                       proposal={
                         proposalsByRequest.get(
-                          r.id
+                          request.id
                         )!
                       }
                     />
-                  ) : r.status ===
+                  ) : request.status ===
                     "pending_review" ? (
                     <span className="text-xs leading-relaxed text-ink-muted">
                       A person will review this before
@@ -237,7 +243,22 @@ function ProposalActions({
             {proposal.interpreter_name}
           </p>
 
-          <p className="text-xs text-ink-muted">
+          {proposal.interpreter_is_advanced_itp_student && (
+            <div className="mt-1">
+              <span className="badge bg-amber-50 text-amber-800">
+                Advanced ITP student
+              </span>
+
+              {proposal.interpreter_college_name && (
+                <p className="mt-1 text-xs text-ink-muted">
+                  College:{" "}
+                  {proposal.interpreter_college_name}
+                </p>
+              )}
+            </div>
+          )}
+
+          <p className="mt-1 text-xs text-ink-muted">
             {proposal.interpreter_is_certified ===
             true
               ? "Certified"
