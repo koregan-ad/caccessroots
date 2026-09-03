@@ -80,6 +80,7 @@ export interface InterpreterProfile {
   profile_photo_url: string | null;
   profile_photo_path: string | null;
   intro_video_url: string | null;
+  intro_video_path: string | null;
   willing_to_mentor: boolean;
   willing_to_work_with_students: boolean;
   pro_bono_commitment: string | null;
