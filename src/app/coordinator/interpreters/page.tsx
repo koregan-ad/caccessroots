@@ -158,6 +158,21 @@ export default async function InterpretersDirectoryPage() {
                     </p>
                   )}
 
+                  {p.interp
+  ?.is_advanced_itp_student && (
+  <div className="mt-2">
+    <span className="badge bg-blue-50 text-blue-700">
+      Advanced ITP student
+    </span>
+
+    {p.interp.college_name && (
+      <p className="mt-1 text-xs text-ink-muted">
+        {p.interp.college_name}
+      </p>
+    )}
+  </div>
+)}
+                  
                   {p.introVideoUrl && (
                     <a
                       href={p.introVideoUrl}
