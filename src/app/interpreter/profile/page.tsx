@@ -462,6 +462,56 @@ export default async function InterpreterProfilePage({
           currentVideoUrl={introVideoUrl}
         />
 
+  <fieldset className="rounded-xl border border-slate-200 p-4 space-y-4">
+  <legend className="px-2 text-sm font-medium">
+    Student status
+  </legend>
+
+  <label className="flex items-start gap-3 text-sm">
+    <input
+      type="checkbox"
+      name="is_advanced_itp_student"
+      defaultChecked={
+        row?.is_advanced_itp_student ?? false
+      }
+      className="mt-1"
+    />
+
+    <span>
+      <span className="block font-medium">
+        I am currently an Advanced ITP student
+      </span>
+
+      <span className="mt-1 block text-xs text-ink-muted">
+        Turn this off when you become a working interpreter.
+      </span>
+    </span>
+  </label>
+
+  <div>
+    <label
+      className="label"
+      htmlFor="college_name"
+    >
+      College or ITP program
+    </label>
+
+    <input
+      id="college_name"
+      name="college_name"
+      className="input"
+      defaultValue={
+        row?.college_name ?? ""
+      }
+      placeholder="College or program name"
+    />
+
+    <p className="mt-1 text-xs text-ink-muted">
+      Required when Advanced ITP student is selected.
+    </p>
+  </div>
+</fieldset>
+  
         <fieldset className="rounded-xl border border-slate-200 p-4 space-y-3">
           <legend className="px-2 text-sm font-medium">
             Mentorship and student support
