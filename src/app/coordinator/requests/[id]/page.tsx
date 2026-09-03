@@ -5,7 +5,10 @@ import {
   createInterpreterPhotoUrl,
   createInterpreterVideoUrl,
 } from "@/lib/interpreter-photos";
-import { formatDateTime, relativeFromNow } from "@/lib/utils";
+import {
+  formatDateTime,
+  relativeFromNow,
+} from "@/lib/utils";
 import type { InterpreterRecommendation } from "@/lib/types";
 import {
   eventTypeLabel,
@@ -18,15 +21,17 @@ export default async function MatchRequestPage({
 }: {
   params: { id: string };
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase =
+    createSupabaseServerClient();
 
-  const { data: request, error } = await supabase
-    .from("requests")
-    .select(
-      "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
-    )
-    .eq("id", params.id)
-    .maybeSingle();
+  const { data: request, error } =
+    await supabase
+      .from("requests")
+      .select(
+        "id,title,description,event_type,sensitivity,event_address,event_start,event_end,languages_needed,modality,status,requestor_id,notes_internal"
+      )
+      .eq("id", params.id)
+      .maybeSingle();
 
   if (error) {
     console.error(
@@ -92,7 +97,9 @@ export default async function MatchRequestPage({
     });
 
   if (assignmentError) {
-    throw new Error(assignmentError.message);
+    throw new Error(
+      assignmentError.message
+    );
   }
 
   const {
@@ -102,7 +109,7 @@ export default async function MatchRequestPage({
     ? await supabase
         .from("interpreter_profiles")
         .select(
-          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students"
+          "profile_id,is_certified,certifications,licenses,specialties,experience_band,profile_photo_path,intro_video_path,willing_to_mentor,willing_to_work_with_students,accepting_requests,available_days,preferred_time_blocks,unavailable_until"
         )
         .in(
           "profile_id",
@@ -122,38 +129,40 @@ export default async function MatchRequestPage({
     );
   }
 
-  const interpreterDetailsById = new Map(
-    await Promise.all(
-      (interpreterDetails ?? []).map(
-        async (details: any) =>
-          [
-            details.profile_id,
-            {
-              ...details,
+  const interpreterDetailsById =
+    new Map(
+      await Promise.all(
+        (interpreterDetails ?? []).map(
+          async (details: any) =>
+            [
+              details.profile_id,
+              {
+                ...details,
 
-              profilePhotoUrl:
-                await createInterpreterPhotoUrl(
-                  supabase,
-                  details.profile_photo_path
-                ),
+                profilePhotoUrl:
+                  await createInterpreterPhotoUrl(
+                    supabase,
+                    details.profile_photo_path
+                  ),
 
-              introVideoUrl:
-                await createInterpreterVideoUrl(
-                  supabase,
-                  details.intro_video_path
-                ),
-            },
-          ] as const
+                introVideoUrl:
+                  await createInterpreterVideoUrl(
+                    supabase,
+                    details.intro_video_path
+                  ),
+              },
+            ] as const
+        )
       )
-    )
-  );
+    );
 
   const recommendations = recs;
 
   const assignmentByInterpreter =
     new Map<string, any>();
 
-  for (const assignment of assignmentRows ?? []) {
+  for (const assignment of
+    assignmentRows ?? []) {
     if (
       !assignmentByInterpreter.has(
         assignment.interpreter_id
@@ -272,7 +281,8 @@ export default async function MatchRequestPage({
         )}
       </div>
 
-      {request.status === "pending_review" && (
+      {request.status ===
+        "pending_review" && (
         <div className="mt-5 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">
           <p className="font-semibold">
             Held for admin review
@@ -336,7 +346,7 @@ export default async function MatchRequestPage({
             return (
               <div
                 key={r.interpreter_id}
-                className="card p-4 flex items-center justify-between gap-4"
+                className="card p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex items-start gap-3">
                   {details?.profilePhotoUrl ? (
@@ -410,6 +420,10 @@ export default async function MatchRequestPage({
                         : ""}
                     </p>
 
+                    <AvailabilityDetails
+                      interpreter={details}
+                    />
+
                     {details?.introVideoUrl && (
                       <a
                         href={
@@ -417,7 +431,7 @@ export default async function MatchRequestPage({
                         }
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 inline-block text-xs text-brand-700 underline"
+                        className="mt-2 inline-block text-xs text-brand-700 underline"
                       >
                         View ASL introduction
                       </a>
@@ -442,7 +456,7 @@ export default async function MatchRequestPage({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-3">
                   <span className="text-sm font-semibold">
                     {r.fit_score}{" "}
                     <span className="text-ink-muted text-xs">
@@ -554,6 +568,99 @@ export default async function MatchRequestPage({
         )}
       </div>
     </div>
+  );
+}
+
+function AvailabilityDetails({
+  interpreter,
+}: {
+  interpreter: any;
+}) {
+  if (!interpreter) {
+    return null;
+  }
+
+  const isAccepting =
+    interpreter.accepting_requests !== false;
+
+  return (
+    <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-ink-muted">
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className={`badge ${
+            isAccepting
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-amber-50 text-amber-700"
+          }`}
+        >
+          {isAccepting
+            ? "Accepting requests"
+            : "Paused"}
+        </span>
+
+        {interpreter.unavailable_until && (
+          <span>
+            Unavailable until{" "}
+            {formatDateOnly(
+              interpreter.unavailable_until
+            )}
+          </span>
+        )}
+      </div>
+
+      <p className="mt-2">
+        Available days:{" "}
+        {formatAvailabilityList(
+          interpreter.available_days
+        )}
+      </p>
+
+      <p className="mt-1">
+        Preferred times:{" "}
+        {formatAvailabilityList(
+          interpreter.preferred_time_blocks
+        )}
+      </p>
+    </div>
+  );
+}
+
+function formatAvailabilityList(
+  values: string[] | null | undefined
+) {
+  if (!Array.isArray(values) || values.length === 0) {
+    return "Flexible / not specified";
+  }
+
+  return values
+    .map((value) =>
+      value
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, (letter) =>
+          letter.toUpperCase()
+        )
+    )
+    .join(", ");
+}
+
+function formatDateOnly(value: string) {
+  const [year, month, day] = value
+    .split("-")
+    .map(Number);
+
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(
+    new Date(
+      Date.UTC(year, month - 1, day)
+    )
   );
 }
 
