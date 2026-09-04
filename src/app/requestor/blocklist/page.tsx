@@ -2,13 +2,47 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { addBlockAction, removeBlockAction } from "./actions";
 
-export default async function BlocklistPage() {
-  const profile = await requireProfile();
+type BlocklistRow = {
+  block_id: string;
+  interpreter_id: string;
+  interpreter_name: string;
+  interpreter_email: string;
+  reason: string | null;
+  created_at: string;
+};
+
+const errorMessages: Record<string, string> = {
+  missing_email: "Enter an interpreter email address.",
+  not_found: "No interpreter account was found with that email address.",
+  add_failed: "We could not add that interpreter. Please try again.",
+  remove_failed: "We could not remove that interpreter. Please try again.",
+};
+
+export default async function BlocklistPage({
+  searchParams,
+}: {
+  searchParams?: {
+    added?: string;
+    removed?: string;
+    error?: string;
+  };
+}) {
+  await requireProfile();
   const supabase = createSupabaseServerClient();
-  const { data: blocks } = await supabase
-    .from("coi_blocks")
-    .select("id,reason,interpreter:interpreter_id(id,full_name,email)")
-    .eq("requestor_id", profile.id);
+  const { data, error } = await supabase.rpc("requestor_blocklist");
+
+  if (error) {
+    console.error("Blocklist load failed:", {
+      code: error.code,
+      message: error.message,
+    });
+    throw new Error("Could not load your blocklist");
+  }
+
+  const blocks = (data ?? []) as BlocklistRow[];
+  const errorMessage = searchParams?.error
+    ? errorMessages[searchParams.error] ?? errorMessages.add_failed
+    : null;
 
   return (
     <div className="max-w-2xl">
@@ -19,6 +53,33 @@ export default async function BlocklistPage() {
         admin can only review it with a written reason, and you'll be notified
         if that ever happens.
       </p>
+
+      {searchParams?.added === "1" && (
+        <div
+          role="status"
+          className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+        >
+          The interpreter was added to your blocklist.
+        </div>
+      )}
+
+      {searchParams?.removed === "1" && (
+        <div
+          role="status"
+          className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+        >
+          The interpreter was removed from your blocklist.
+        </div>
+      )}
+
+      {errorMessage && (
+        <div
+          role="alert"
+          className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+        >
+          {errorMessage}
+        </div>
+      )}
 
       <form action={addBlockAction} className="card p-6 mt-6 space-y-4">
         <div>
@@ -51,22 +112,27 @@ export default async function BlocklistPage() {
       <div className="card mt-8 overflow-hidden">
         <h2 className="px-6 py-4 font-semibold">Current blocklist</h2>
         <ul className="divide-y divide-slate-100">
-          {blocks?.map((b: any) => (
-            <li key={b.id} className="px-6 py-4 flex items-center justify-between">
+          {blocks.map((b) => (
+            <li
+              key={b.block_id}
+              className="px-6 py-4 flex items-center justify-between"
+            >
               <div>
-                <p className="font-medium">{b.interpreter?.full_name}</p>
-                <p className="text-sm text-ink-muted">{b.interpreter?.email}</p>
+                <p className="font-medium">{b.interpreter_name}</p>
+                <p className="text-sm text-ink-muted">
+                  {b.interpreter_email}
+                </p>
                 {b.reason && (
                   <p className="text-sm text-ink-muted mt-1 italic">"{b.reason}"</p>
                 )}
               </div>
               <form action={removeBlockAction}>
-                <input type="hidden" name="id" value={b.id} />
+                <input type="hidden" name="id" value={b.block_id} />
                 <button className="btn-secondary text-sm py-1.5 px-3">Remove</button>
               </form>
             </li>
           ))}
-          {(!blocks || blocks.length === 0) && (
+          {blocks.length === 0 && (
             <li className="px-6 py-6 text-sm text-ink-muted text-center">
               No one on your blocklist.
             </li>
