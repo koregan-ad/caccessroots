@@ -253,20 +253,41 @@ function AvailabilityDetails({
   const preferredTimeBlocks =
     interpreter.preferred_time_blocks ?? [];
 
+  const isAccepting =
+    interpreter.accepting_requests ?? true;
+
+  const unavailableUntil =
+    interpreter.unavailable_until as
+      | string
+      | null;
+
+  const today = new Date()
+    .toISOString()
+    .slice(0, 10);
+
+  const isTemporarilyUnavailable =
+    Boolean(
+      unavailableUntil &&
+        unavailableUntil >= today
+    );
+
+  const availabilityLabel = !isAccepting
+    ? "Paused"
+    : isTemporarilyUnavailable
+      ? "Temporarily unavailable"
+      : "Accepting requests";
+
+  const availabilityColor =
+    availabilityLabel === "Accepting requests"
+      ? "bg-emerald-50 text-emerald-700"
+      : "bg-amber-50 text-amber-700";
+
   return (
     <div className="min-w-48 space-y-1">
       <span
-        className={`badge ${
-          interpreter.accepting_requests ??
-          true
-            ? "bg-emerald-50 text-emerald-700"
-            : "bg-amber-50 text-amber-700"
-        }`}
+        className={`badge ${availabilityColor}`}
       >
-        {interpreter.accepting_requests ??
-        true
-          ? "Accepting requests"
-          : "Paused"}
+        {availabilityLabel}
       </span>
 
       <p className="text-xs text-ink-muted">
@@ -291,14 +312,15 @@ function AvailabilityDetails({
           : "Flexible"}
       </p>
 
-      {interpreter.unavailable_until && (
-        <p className="text-xs font-medium text-amber-700">
-          Unavailable until{" "}
-          {formatAvailabilityDate(
-            interpreter.unavailable_until
-          )}
-        </p>
-      )}
+      {isTemporarilyUnavailable &&
+        unavailableUntil && (
+          <p className="text-xs font-medium text-amber-700">
+            Unavailable until{" "}
+            {formatAvailabilityDate(
+              unavailableUntil
+            )}
+          </p>
+        )}
     </div>
   );
 }
