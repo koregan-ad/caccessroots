@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function addBlockAction(formData: FormData) {
@@ -13,27 +14,30 @@ export async function addBlockAction(formData: FormData) {
   const interpreter_email = String(formData.get("interpreter_email") ?? "").trim();
   const reason = String(formData.get("reason") ?? "").trim() || null;
 
-  // Look up interpreter by email (must exist and be role=interpreter)
-  const { data: interp, error: lookupErr } = await supabase
-    .from("profiles")
-    .select("id,role")
-    .eq("email", interpreter_email)
-    .single();
-  if (lookupErr || !interp) {
-    throw new Error("No interpreter found with that email.");
-  }
-  if (interp.role !== "interpreter") {
-    throw new Error("That account isn't an interpreter.");
+  if (!interpreter_email) {
+    redirect("/requestor/blocklist?error=missing_email");
   }
 
-  const { error } = await supabase.from("coi_blocks").insert({
-    requestor_id: user.id,
-    interpreter_id: interp.id,
-    reason,
+  const { error } = await supabase.rpc("add_requestor_block_by_email", {
+    p_interpreter_email: interpreter_email,
+    p_reason: reason,
   });
-  if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+
+  if (error) {
+    console.error("Blocklist add failed:", {
+      code: error.code,
+      message: error.message,
+    });
+
+    redirect(
+      error.code === "P0002"
+        ? "/requestor/blocklist?error=not_found"
+        : "/requestor/blocklist?error=add_failed"
+    );
+  }
 
   revalidatePath("/requestor/blocklist");
+  redirect("/requestor/blocklist?added=1");
 }
 
 export async function removeBlockAction(formData: FormData) {
@@ -49,7 +53,14 @@ export async function removeBlockAction(formData: FormData) {
     .delete()
     .eq("id", id)
     .eq("requestor_id", user.id);
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("Blocklist remove failed:", {
+      code: error.code,
+      message: error.message,
+    });
+    redirect("/requestor/blocklist?error=remove_failed");
+  }
 
   revalidatePath("/requestor/blocklist");
+  redirect("/requestor/blocklist?removed=1");
 }
